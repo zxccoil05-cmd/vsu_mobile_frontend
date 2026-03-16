@@ -283,6 +283,7 @@
         appearance: none;
     }
 
+    /* АНИМАЦИИ ДЛЯ КНОПОК */
     .action-btn {
         width: 100%; 
         margin-top: 12px; 
@@ -294,9 +295,17 @@
         font-weight: 800;
         font-size: 14px; 
         cursor: pointer; 
-        transition: 0.2s; 
         font-family: inherit;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
+    .action-btn:hover {
+        transform: scale(0.98);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+    .action-btn:active {
+        transform: scale(0.96);
+    }
+
     .btn-danger { 
         background: #ef4444 !important; 
     }
@@ -682,7 +691,7 @@
             <span>🏠</span>
             <span>Главная</span>
         </div>
-        <div class="nav-item active" onclick="switchScreen(2)">
+        <div class="nav-item" onclick="switchScreen(2)">
             <span>📅</span>
             <span>Расписание</span>
         </div>
@@ -697,7 +706,7 @@
     </nav>
 
     <script>
-        // Исходный код пользователя (всё, что было внутри тега script)
+        // Исходный код пользователя
         const API_BASE = "https://vsu-schedule-bot-code.onrender.com/api";
         let currentDayIndex = 0; 
         let touchStartX = 0; 
@@ -715,37 +724,6 @@
             'Куср': 'КУСР'
         };
 
-        const screenToNavIndex = {
-            0: null,
-            1: 0,
-            2: 1,
-            3: 2
-        };
-
-        function switchScreen(idx) {
-            const nav = document.querySelector('.bottom-nav');
-            if (idx === 0) {
-                nav.classList.add('hidden');
-            } else {
-                nav.classList.remove('hidden');
-            }
-            
-            document.getElementById('screens-container').style.transform = `translateX(-${idx * 20}%)`;
-            
-            document.querySelectorAll('.nav-item').forEach((n, i) => {
-                n.classList.toggle('active', i === screenToNavIndex[idx]);
-            });
-            
-            // Перезапускаем анимацию для всех карточек на новом экране
-            const currentScreen = document.querySelectorAll('.screen')[idx];
-            const cards = currentScreen.querySelectorAll('.glass-card');
-            cards.forEach(card => {
-                card.style.animation = 'none';
-                card.offsetHeight; // форсируем перерисовку
-                card.style.animation = 'fadeInUp 0.3s ease forwards';
-            });
-        }
-
         function goToDay(idx) {
             if (idx < 0 || idx > 5) return;
             currentDayIndex = idx;
@@ -755,7 +733,6 @@
             if (track) track.style.transform = `translateX(-${idx * 16.666}%)`;
             document.querySelectorAll('.day-tab').forEach((t, i) => t.classList.toggle('active', i === idx));
             
-            // Анимируем карточки в выбранном дне
             const dayColumns = document.querySelectorAll('.day-column');
             const cards = dayColumns[idx].querySelectorAll('.glass-card');
             cards.forEach(card => {
@@ -931,10 +908,12 @@
         async function init() {
             const container = document.getElementById('screens-container');
             container.style.transition = 'none';
-            container.style.transform = 'translateX(-50%)';
+            // Показываем главный экран (индекс 1)
+            container.style.transform = 'translateX(-20%)';
             
+            // Устанавливаем активный пункт навигации на главный (индекс 0)
             document.querySelectorAll('.nav-item').forEach((n, i) => {
-                n.classList.toggle('active', i === 1);
+                n.classList.toggle('active', i === 0);
             });
             
             setTheme(localStorage.getItem('vsu_theme') || 'light');
@@ -957,7 +936,8 @@
                     await loadGroups(savedF);
                     if (savedG) { 
                         document.getElementById('group-select').value = savedG; 
-                        loadSchedule(savedG); 
+                        // Загружаем расписание и переходим на экран 2
+                        loadSchedule(savedG);
                     }
                 }
             } catch (e) { 
@@ -972,7 +952,7 @@
         
         document.getElementById('group-select').onchange = (e) => { 
             localStorage.setItem('vsu_group', e.target.value); 
-            loadSchedule(e.target.value); 
+            loadSchedule(e.target.value);
         };
         
         const swiperBox = document.getElementById('schedule-swiper');
@@ -1084,6 +1064,8 @@
                     createdAt: new Date()
                 });
                 console.log('Профиль создан');
+                // Приветственное окно при первой регистрации
+                alert('👋 Добро пожаловать в ВГУ Mobile! Ваш профиль успешно создан.');
             } else {
                 const data = snap.data();
                 if (data.settings?.theme) {
@@ -1270,12 +1252,8 @@
         }
 
         // Переопределяем функцию switchScreen, чтобы добавить вызов loadProfileScreen для экрана 4
-        // Сохраняем старую функцию, но переопределяем новую
         const originalSwitchScreen = window.switchScreen;
         window.switchScreen = function(idx) {
-            // Вызываем оригинальную логику, но нужно учесть, что screenToNavIndex теперь должен включать 4
-            // В оригинале screenToNavIndex не включает 4, поэтому навигация не будет работать для нового экрана.
-            // Переопределим полностью, скопировав код оригинальной функции и добавив обработку 4.
             const nav = document.querySelector('.bottom-nav');
             if (idx === 0) {
                 nav.classList.add('hidden');
@@ -1285,7 +1263,6 @@
             
             document.getElementById('screens-container').style.transform = `translateX(-${idx * 20}%)`;
             
-            // Обновлённый маппинг индексов экранов на индексы навигации (навигация имеет 4 элемента)
             const navIndexMap = {
                 0: null,
                 1: 0,
@@ -1297,18 +1274,16 @@
                 n.classList.toggle('active', i === navIndexMap[idx]);
             });
             
-            // Перезапускаем анимацию для всех карточек на новом экране
             const currentScreen = document.querySelectorAll('.screen')[idx];
             if (currentScreen) {
                 const cards = currentScreen.querySelectorAll('.glass-card');
                 cards.forEach(card => {
                     card.style.animation = 'none';
-                    card.offsetHeight; // форсируем перерисовку
+                    card.offsetHeight;
                     card.style.animation = 'fadeInUp 0.3s ease forwards';
                 });
             }
 
-            // Дополнительное действие для экрана профиля
             if (idx === 4) {
                 loadProfileScreen();
             }
@@ -1323,7 +1298,7 @@
             }
         }, 1000);
 
-        // Заглушка для функции редактирования профиля (пока не реализована)
+        // Заглушка для функции редактирования профиля
         window.editProfile = function() {
             alert('Редактирование профиля будет доступно позже');
         };

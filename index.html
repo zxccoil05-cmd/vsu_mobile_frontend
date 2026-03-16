@@ -9,8 +9,7 @@
     <!-- Telegram WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-    /* 1. СИСТЕМА ПЕРЕМЕННЫХ И ТЕМ */
-    
+    /* ========== СИСТЕМА ПЕРЕМЕННЫХ И ТЕМ ========== */
     @import url('https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&family=LINE+Seed+JP&display=swap');
     :root {
         --bg: #f1f5f9; 
@@ -74,8 +73,34 @@
         --text: #ecfdf5; --card-bg: #065f46; --blob1: #064e3b; --blob2: #065f46; 
         --border: rgba(20, 184, 166, 0.3); --glass: rgba(6, 78, 59, 0.7); --glass-thick: #022c22; 
     }
+    /* НОВЫЕ ТЕМЫ */
+    [data-theme="ocean"] { 
+        --bg: #e0f2fe; --primary: #0284c7; --primary-solid: #0284c7; --primary-grad: linear-gradient(135deg, #0284c7, #38bdf8);
+        --text: #0c4a6e; --card-bg: #ffffff; --blob1: #38bdf8; --blob2: #0284c7; 
+        --border: #7dd3fc; --glass: rgba(186, 230, 253, 0.6); --glass-thick: #e0f2fe; 
+    }
+    [data-theme="sunset"] { 
+        --bg: #ffedd5; --primary: #ea580c; --primary-solid: #ea580c; --primary-grad: linear-gradient(135deg, #ea580c, #f97316);
+        --text: #7c2d12; --card-bg: #ffffff; --blob1: #f97316; --blob2: #ea580c; 
+        --border: #fed7aa; --glass: rgba(254, 215, 170, 0.6); --glass-thick: #ffedd5; 
+    }
+    [data-theme="lavender"] { 
+        --bg: #f3e8ff; --primary: #9333ea; --primary-solid: #9333ea; --primary-grad: linear-gradient(135deg, #9333ea, #c084fc);
+        --text: #581c87; --card-bg: #ffffff; --blob1: #c084fc; --blob2: #9333ea; 
+        --border: #d8b4fe; --glass: rgba(216, 180, 254, 0.6); --glass-thick: #f3e8ff; 
+    }
+    [data-theme="midnight"] { 
+        --bg: #0f172a; --primary: #38bdf8; --primary-solid: #38bdf8; --primary-grad: linear-gradient(135deg, #38bdf8, #7dd3fc);
+        --text: #e0f2fe; --card-bg: #1e293b; --blob1: #0284c7; --blob2: #0f172a; 
+        --border: #334155; --glass: rgba(30, 41, 59, 0.7); --glass-thick: #0f172a; 
+    }
+    [data-theme="autumn"] { 
+        --bg: #fef9c3; --primary: #b45309; --primary-solid: #b45309; --primary-grad: linear-gradient(135deg, #b45309, #d97706);
+        --text: #78350f; --card-bg: #ffffff; --blob1: #d97706; --blob2: #b45309; 
+        --border: #fcd34d; --glass: rgba(252, 211, 77, 0.6); --glass-thick: #fef9c3; 
+    }
 
-    /* 2. БАЗОВЫЕ СТИЛИ */
+    /* ========== БАЗОВЫЕ СТИЛИ ========== */
     * { 
         box-sizing: border-box; 
         -webkit-tap-highlight-color: transparent; 
@@ -228,14 +253,14 @@
     /* КОНТЕЙНЕР ЭКРАНОВ */
     .screens-container { 
         display: flex; 
-        width: 500%; 
+        width: 900%; 
         height: 100%;
         transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1); 
         margin-top: 0;
     }
 
     .screen { 
-        width: 20%; 
+        width: calc(100% / 9); 
         height: 100%; 
         overflow-y: auto; 
         padding: 0 20px; 
@@ -283,7 +308,28 @@
         appearance: none;
     }
 
-    /* АНИМАЦИИ ДЛЯ КНОПОК */
+    /* ИКОНКИ (маски) */
+    .icon {
+        width: 24px;
+        height: 24px;
+        background-color: currentColor;
+        mask-size: contain;
+        mask-repeat: no-repeat;
+        mask-position: center;
+        -webkit-mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+    }
+    .home-icon { mask-image: url('svg/home.svg'); -webkit-mask-image: url('svg/home.svg'); }
+    .list-icon { mask-image: url('svg/list.svg'); -webkit-mask-image: url('svg/list.svg'); }
+    .search-icon { mask-image: url('svg/search.svg'); -webkit-mask-image: url('svg/search.svg'); }
+    .profile-icon { mask-image: url('svg/profile.svg'); -webkit-mask-image: url('svg/profile.svg'); }
+    .add-friend-icon { mask-image: url('svg/add_friend.svg'); -webkit-mask-image: url('svg/add_friend.svg'); }
+    .warning-icon { mask-image: url('svg/warning.svg'); -webkit-mask-image: url('svg/warning.svg'); }
+    .palette-icon { mask-image: url('svg/palette.svg'); -webkit-mask-image: url('svg/palette.svg'); }
+    .note-icon { mask-image: url('svg/note.svg'); -webkit-mask-image: url('svg/note.svg'); }
+
+    /* КНОПКИ */
     .action-btn {
         width: 100%; 
         margin-top: 12px; 
@@ -297,6 +343,10 @@
         cursor: pointer; 
         font-family: inherit;
         transition: transform 0.2s ease, box-shadow 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
     }
     .action-btn:hover {
         transform: scale(0.98);
@@ -305,19 +355,29 @@
     .action-btn:active {
         transform: scale(0.96);
     }
-
     .btn-danger { 
         background: #ef4444 !important; 
+    }
+
+    /* Компактные кнопки для списков */
+    .compact-btn {
+        margin: 0;
+        padding: 8px 12px;
+        font-size: 12px;
+        width: auto;
+        min-width: 70px;
+        flex: 0 0 auto;
     }
 
     .double-button-field {
         display: flex;
         width: 100%;
         gap: 15px;
+        flex-wrap: wrap;
     }
 
     .contact-button {
-        flex: 1;
+        flex: 1 1 auto;
     }
 
     /* ШАПКА РАСПИСАНИЯ */
@@ -436,7 +496,7 @@
         display: block; 
     }
 
-    /* НИЖНЯЯ НАВИГАЦИЯ */
+    /* НИЖНЯЯ НАВИГАЦИЯ (только иконки) */
     .bottom-nav {
         position: fixed; 
         bottom: 20px; 
@@ -467,11 +527,9 @@
 
     .nav-item {
         display: flex;
-        flex-direction: column;
         align-items: center;
         justify-content: center;
         height: 100%;
-        text-align: center;
         flex: 1;
         color: rgba(255,255,255,0.6);
         cursor: pointer;
@@ -494,25 +552,11 @@
         color: white;
     }
 
-    .nav-item.active span:first-child {
+    .nav-item.active .icon {
         transform: scale(1.05);
-        transition: transform 0.3s ease;
     }
 
-    .nav-item.active span:last-child {
-        transform: scale(1.05);
-        transition: transform 0.3s ease;
-    }
-
-    .nav-item span:first-child {
-        font-size: 20px;
-        transition: transform 0.3s ease;
-    }
-
-    .nav-item span:last-child {
-        font-size: 11px;
-        font-weight: 700;
-        margin-top: 2px;
+    .nav-item .icon {
         transition: transform 0.3s ease;
     }
 
@@ -538,6 +582,56 @@
     .teacher-result {
         animation: fadeInUp 0.3s ease forwards;
     }
+
+    /* Стили для шапки профиля с возможностью градиента */
+    /* Новые стили для профиля (шапка с аватаркой) */
+    .profile-header {
+        position: relative;
+        padding: 0;
+        overflow: hidden;
+    }
+    .profile-header-bg {
+        height: 120px; /* высота цветной шапки */
+        background: var(--primary-grad);
+        transition: background 0.2s ease;
+    }
+    .profile-header.solid .profile-header-bg {
+        background: var(--primary-solid);
+    }
+    .profile-avatar-wrapper {
+        display: flex;
+        justify-content: center;
+        margin-top: -50px; /* половина высоты аватарки */
+        margin-bottom: 10px;
+    }
+    .profile-avatar {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid var(--glass); /* чтобы отделялось от фона */
+        background: var(--card-bg);
+    }
+    .profile-name {
+        text-align: center;
+        font-size: 22px;
+        font-weight: 800;
+        margin: 0 0 5px 0;
+    }
+    .profile-note {
+        text-align: center;
+        opacity: 0.8;
+        font-size: 14px;
+        padding: 0 15px 15px;
+    }
+    /* Предпросмотр в редакторе */
+    .preview-header {
+        height: 80px;
+        border-radius: 16px 16px 0 0;
+        margin-bottom: 15px;
+        transition: background 0.2s ease;
+    }
+
     </style>
 </head>
 <body>
@@ -545,10 +639,9 @@
         <div class="blob blob-1"></div>
         <div class="blob blob-2"></div>
     </div>
-
     <div class="app-viewport">
         <div class="screens-container" id="screens-container">
-            <!-- Экран выбора темы (индекс 0) -->
+            <!-- Экран 0: выбор темы -->
             <div class="screen" id="theme-screen">
                 <div class="theme-header">
                     <button class="back-btn" onclick="switchScreen(1)">←</button>
@@ -556,39 +649,23 @@
                 </div>
                 <div class="content-scroll">
                     <div class="glass-card">
-                        <div class="theme-option" onclick="setTheme('light')">
-                            <span>☀️ Светлая</span>
-                            <span class="check" id="check-light">✓</span>
-                        </div>
-                        <div class="theme-option" onclick="setTheme('dark')">
-                            <span>🌙 Темная</span>
-                            <span class="check" id="check-dark">✓</span>
-                        </div>
-                        <div class="theme-option" onclick="setTheme('forest')">
-                            <span>🌲 Лесная</span>
-                            <span class="check" id="check-forest">✓</span>
-                        </div>
-                        <div class="theme-option" onclick="setTheme('red')">
-                            <span>🔥 Рубиновая</span>
-                            <span class="check" id="check-red">✓</span>
-                        </div>
-                        <div class="theme-option" onclick="setTheme('neon')">
-                            <span>💚 Неоновая</span>
-                            <span class="check" id="check-neon">✓</span>
-                        </div>
-                        <div class="theme-option" onclick="setTheme('pink')">
-                            <span>🌸 Розовая</span>
-                            <span class="check" id="check-pink">✓</span>
-                        </div>
-                        <div class="theme-option" onclick="setTheme('dark-pink')">
-                            <span>🌸 Розовая (Темная)</span>
-                            <span class="check" id="check-dark-pink">✓</span>
-                        </div>
+                        <div class="theme-option" onclick="setTheme('light')"><span>☀️ Светлая</span><span class="check" id="check-light">✓</span></div>
+                        <div class="theme-option" onclick="setTheme('dark')"><span>🌙 Темная</span><span class="check" id="check-dark">✓</span></div>
+                        <div class="theme-option" onclick="setTheme('forest')"><span>🌲 Лесная</span><span class="check" id="check-forest">✓</span></div>
+                        <div class="theme-option" onclick="setTheme('red')"><span>🔥 Рубиновая</span><span class="check" id="check-red">✓</span></div>
+                        <div class="theme-option" onclick="setTheme('neon')"><span>💚 Неоновая</span><span class="check" id="check-neon">✓</span></div>
+                        <div class="theme-option" onclick="setTheme('pink')"><span>🌸 Розовая</span><span class="check" id="check-pink">✓</span></div>
+                        <div class="theme-option" onclick="setTheme('dark-pink')"><span>🌸 Розовая (Темная)</span><span class="check" id="check-dark-pink">✓</span></div>
+                        <div class="theme-option" onclick="setTheme('ocean')"><span>🌊 Океан</span><span class="check" id="check-ocean">✓</span></div>
+                        <div class="theme-option" onclick="setTheme('sunset')"><span>🌅 Закат</span><span class="check" id="check-sunset">✓</span></div>
+                        <div class="theme-option" onclick="setTheme('lavender')"><span>💜 Лаванда</span><span class="check" id="check-lavender">✓</span></div>
+                        <div class="theme-option" onclick="setTheme('midnight')"><span>🌃 Полночь</span><span class="check" id="check-midnight">✓</span></div>
+                        <div class="theme-option" onclick="setTheme('autumn')"><span>🍂 Осень</span><span class="check" id="check-autumn">✓</span></div>
                     </div>
                 </div>
             </div>
 
-            <!-- Главный экран (индекс 1) -->
+            <!-- Экран 1: главный (выбор факультета/группы) -->
             <div class="screen" id="main-screen">
                 <header class="header">
                     <div class="container">
@@ -604,23 +681,20 @@
                             <label class="field-label">ФАКУЛЬТЕТ</label>
                             <select id="fac-select"><option>Загрузка...</option></select>
                         </div>
-                        
                         <div id="group-area" style="display:none;">
                             <div class="select-bar">
                                 <label class="field-label">ГРУППА</label>
                                 <select id="group-select"></select>
                             </div>
-                            
-                            <button class="action-btn" onclick="openThemeScreen()">🎨 Настроить тему</button>
-                            
-                            <button class="action-btn" onclick="window.open('https://t.me/vsu_mobile', '_blank')">📢 Канал по улучшению</button>
-                            <button class="action-btn btn-danger" onclick="window.open('https://t.me/wch8h', '_blank')">⚠️ Нашли ошибку?</button>
+                            <button class="action-btn" onclick="openThemeScreen()"><div class="icon palette-icon"></div> Настроить тему</button>
+                            <button class="action-btn" onclick="window.open('https://t.me/vsu_mobile', '_blank')"><div class="icon add-friend-icon"></div> Канал по улучшению</button>
+                            <button class="action-btn btn-danger" onclick="window.open('https://t.me/wch8h', '_blank')"><div class="icon warning-icon"></div> Нашли ошибку?</button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Экран расписания (индекс 2) -->
+            <!-- Экран 2: расписание -->
             <div class="screen" id="schedule-screen">
                 <div class="days-tabs" id="days-tabs">
                     <div class="day-tab" onclick="goToDay(0)">ПН</div>
@@ -635,352 +709,407 @@
                 </div>
             </div>
 
-            <!-- Экран поиска (индекс 3) -->
+            <!-- Экран 3: поиск преподавателей -->
             <div class="screen" id="search-screen">
                 <div class="content-scroll">
-                    <h1 class="logo" style="margin: 20px 0;">Поиск</h1>
+                    <h1 class="logo" style="margin:20px 0;">Поиск</h1>
                     <div class="glass-card">
                         <input type="text" id="teacher-input" class="search-input" placeholder="Фамилия преподавателя...">
-                        <button class="action-btn" onclick="searchTeacher()">🔍 Найти</button>
+                        <button class="action-btn" onclick="searchTeacher()"><div class="icon search-icon"></div> Найти</button>
                     </div>
                     <div id="teacher-results"></div>
                 </div>
             </div>
 
-            <!-- Экран профиля (индекс 4) -->
-            <div class="screen" id="profile-screen">
-                <div class="content-scroll" style="padding-top: 20px;">
-                    <!-- Карточка профиля -->
-                    <div class="glass-card" id="profile-card">
-                        <div style="display: flex; align-items: center; gap: 15px;">
-                            <img id="profile-photo" src="" style="width: 60px; height: 60px; border-radius: 30px; object-fit: cover;">
-                            <div>
-                                <h2 id="profile-name">Загрузка...</h2>
-                                <p id="profile-role"></p>
-                                <p id="profile-username"></p>
-                            </div>
-                        </div>
-                        <button class="action-btn" onclick="editProfile()">✎ Редактировать</button>
-                    </div>
+             <div class="screen" id="profile-screen">
+              <div class="content-scroll" style="padding-top:20px;">
+                  <div class="glass-card profile-header" id="profile-header">
+                      <div class="profile-header-bg" id="profile-header-bg"></div>
+                      <div class="profile-avatar-wrapper">
+                          <img id="profile-photo" class="profile-avatar" src="" alt="avatar">
+                      </div>
+                      <h2 class="profile-name" id="profile-name">Загрузка...</h2>
+                      <p class="profile-note" id="profile-note"></p>
+                  </div>
+                  <!-- Кнопки перехода к друзьям и поиску -->
+                  <div class="double-button-field">
+                      <button class="action-btn" onclick="switchScreen(6)"><div class="icon add-friend-icon"></div> Мои друзья</button>
+                      <button class="action-btn" onclick="switchScreen(7)"><div class="icon search-icon"></div> Найти людей</button>
+                  </div>
+                  <button class="action-btn" onclick="switchScreen(5)"><div class="icon profile-icon"></div> Редактировать профиль</button>
+              </div>
+          </div>
 
-                    <!-- Входящие заявки -->
-                    <div class="glass-card" id="requests-section" style="display: none;">
-                        <h3>Заявки в друзья</h3>
-                        <div id="requests-list"></div>
-                    </div>
-
-                    <!-- Список друзей -->
+            <!-- Экран 5: редактирование профиля -->
+            <div class="screen" id="edit-profile-screen">
+                <div class="theme-header">
+                    <button class="back-btn" onclick="switchScreen(4)">←</button>
+                    <h2>Редактировать профиль</h2>
+                </div>
+                <div class="content-scroll">
                     <div class="glass-card">
-                        <h3>Мои друзья</h3>
-                        <div id="friends-list"></div>
+                        <div class="select-bar">
+                            <label class="field-label">Роль</label>
+                            <select id="edit-role" onchange="toggleEditFields()">
+                                <option value="student">Студент</option>
+                                <option value="teacher">Преподаватель</option>
+                            </select>
+                        </div>
+                        <div id="edit-student-fields">
+                            <div class="select-bar"><label class="field-label">Факультет</label><input type="text" id="edit-faculty" class="search-input" placeholder="Факультет"></div>
+                            <div class="select-bar"><label class="field-label">Группа</label><input type="text" id="edit-group" class="search-input" placeholder="Группа"></div>
+                        </div>
+                        <div id="edit-teacher-fields" style="display:none;">
+                            <div class="select-bar"><label class="field-label">ФИО преподавателя</label><input type="text" id="edit-teacher-name" class="search-input" placeholder="Иванов И.И."></div>
+                        </div>
+                        <!-- Заметка -->
+                        <div class="select-bar"><label class="field-label">Заметка о себе</label><textarea id="edit-note" class="search-input" rows="3" placeholder="Напишите что-нибудь..."></textarea></div>
+                        <!-- Настройки фона шапки -->
+                        <div class="select-bar">
+                            <label class="field-label">Фон шапки</label>
+                            <select id="edit-header-type" onchange="toggleHeaderType()">
+                                <option value="gradient">Градиент</option>
+                                <option value="solid">Сплошной цвет</option>
+                            </select>
+                        </div>
+                        <div class="preview-header" id="header-preview"></div>
+                        <div id="edit-header-color" style="display:block;">
+                            <label class="field-label">Цвет (для сплошного)</label>
+                            <input type="color" id="edit-header-color-value" value="#2563eb">
+                        </div>
+                        <button class="action-btn" onclick="saveProfile()"><div class="icon profile-icon"></div> Сохранить</button>
                     </div>
+                </div>
+            </div>
 
-                    <!-- Поиск людей -->
+            <!-- Экран 6: мои друзья -->
+            <div class="screen" id="friends-screen">
+                <div class="theme-header">
+                    <button class="back-btn" onclick="switchScreen(4)">←</button>
+                    <h2>Мои друзья</h2>
+                </div>
+                <div class="content-scroll" id="friends-list-container">
+                    <!-- список будет загружен сюда -->
+                </div>
+            </div>
+
+            <!-- Экран 7: поиск людей -->
+            <div class="screen" id="search-people-screen">
+                <div class="theme-header">
+                    <button class="back-btn" onclick="switchScreen(4)">←</button>
+                    <h2>Поиск людей</h2>
+                </div>
+                <div class="content-scroll">
                     <div class="glass-card">
                         <input type="text" id="search-people-input" class="search-input" placeholder="Введите имя...">
-                        <button class="action-btn" onclick="performSearch()">🔍 Найти</button>
-                        <div id="search-results"></div>
+                        <button class="action-btn" onclick="performSearch()"><div class="icon search-icon"></div> Найти</button>
                     </div>
+                    <div id="search-people-results"></div>
+                </div>
+            </div>
+
+            <!-- Экран 8: просмотр профиля другого пользователя -->
+            <div class="screen" id="view-profile-screen">
+                <div class="theme-header">
+                    <button class="back-btn" onclick="goBackFromView()">←</button>
+                    <h2>Профиль</h2>
+                </div>
+                <div class="content-scroll" id="view-profile-content">
+                    <!-- динамическая загрузка -->
                 </div>
             </div>
         </div>
     </div>
 
     <nav class="bottom-nav">
-        <div class="nav-item" onclick="switchScreen(1)">
-            <span>🏠</span>
-            <span>Главная</span>
-        </div>
-        <div class="nav-item" onclick="switchScreen(2)">
-            <span>📅</span>
-            <span>Расписание</span>
-        </div>
-        <div class="nav-item" onclick="switchScreen(3)">
-            <span>🔍</span>
-            <span>Поиск</span>
-        </div>
-        <div class="nav-item" onclick="switchScreen(4)">
-            <span>👤</span>
-            <span>Профиль</span>
-        </div>
+        <div class="nav-item" onclick="switchScreen(1)"><div class="icon home-icon"></div></div>
+        <div class="nav-item" onclick="switchScreen(2)"><div class="icon list-icon"></div></div>
+        <div class="nav-item" onclick="switchScreen(3)"><div class="icon search-icon"></div></div>
+        <div class="nav-item" onclick="switchScreen(4)"><div class="icon profile-icon"></div></div>
     </nav>
 
+    <!-- ========== СКРИПТЫ ========== -->
+
+    <!-- Основные функции (расписание, темы, навигация) -->
     <script>
-        // Исходный код пользователя
-        const API_BASE = "https://vsu-schedule-bot-code.onrender.com/api";
-        let currentDayIndex = 0; 
-        let touchStartX = 0; 
-        let teacherCache = {};
+    // Основные функции (расписание, темы, навигация)
+    const API_BASE = "https://vsu-schedule-bot-code.onrender.com/api";
+    let currentDayIndex = 0;
+    let touchStartX = 0;
+    let teacherCache = {};
 
-        const typeMap = {
-            'Лек': 'Лекция',
-            'Лек (off)': 'Оффлайн Лекция',
-            'Лаб': 'Лабораторная работа',
-            'ПЗ': 'Практическое занятие',
-            'Пр': 'Практическое занятие',
-            'Сем': 'Семинар',
-            'Экз': 'Экзамен',
-            'Зач': 'Зачет',
-            'Куср': 'КУСР'
-        };
+    const typeMap = {
+        'Лек': 'Лекция',
+        'Лек (off)': 'Оффлайн Лекция',
+        'Лаб': 'Лабораторная работа',
+        'ПЗ': 'Практическое занятие',
+        'Пр': 'Практическое занятие',
+        'Сем': 'Семинар',
+        'Экз': 'Экзамен',
+        'Зач': 'Зачет',
+        'Куср': 'КУСР'
+    };
 
-        function goToDay(idx) {
-            if (idx < 0 || idx > 5) return;
-            currentDayIndex = idx;
-            localStorage.setItem('vsu_last_day', idx);
-            
-            const track = document.getElementById('schedule-track');
-            if (track) track.style.transform = `translateX(-${idx * 16.666}%)`;
-            document.querySelectorAll('.day-tab').forEach((t, i) => t.classList.toggle('active', i === idx));
-            
-            const dayColumns = document.querySelectorAll('.day-column');
-            const cards = dayColumns[idx].querySelectorAll('.glass-card');
-            cards.forEach(card => {
-                card.style.animation = 'none';
-                card.offsetHeight;
-                card.style.animation = 'fadeInUp 0.3s ease forwards';
-            });
+    function goToDay(idx) {
+        if (idx < 0 || idx > 5) return;
+        currentDayIndex = idx;
+        localStorage.setItem('vsu_last_day', idx);
+
+        const track = document.getElementById('schedule-track');
+        if (track) track.style.transform = `translateX(-${idx * 16.666}%)`;
+        document.querySelectorAll('.day-tab').forEach((t, i) => t.classList.toggle('active', i === idx));
+
+        const dayColumns = document.querySelectorAll('.day-column');
+        const cards = dayColumns[idx]?.querySelectorAll('.glass-card');
+        cards?.forEach(card => {
+            card.style.animation = 'none';
+            card.offsetHeight;
+            card.style.animation = 'fadeInUp 0.3s ease forwards';
+        });
+    }
+
+    function openThemeScreen() {
+        switchScreen(0);
+    }
+
+    function setTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('vsu_theme', theme);
+
+        const style = getComputedStyle(document.documentElement);
+        const b1 = document.querySelector('.blob-1');
+        const b2 = document.querySelector('.blob-2');
+        if (b1) b1.style.background = style.getPropertyValue('--blob1').trim();
+        if (b2) b2.style.background = style.getPropertyValue('--blob2').trim();
+
+        const nav = document.querySelector('.bottom-nav');
+        if (nav) nav.style.background = style.getPropertyValue('--primary-grad');
+
+        document.querySelectorAll('.theme-option').forEach(opt => opt.classList.remove('active-theme'));
+        const activeOption = document.querySelector(`[onclick="setTheme('${theme}')"]`);
+        if (activeOption) activeOption.classList.add('active-theme');
+    }
+
+    function renderLessonRow(l, mode = 'group') {
+        const timeClean = (l.time || '').replace(/[()]/g, '');
+        const timeParts = timeClean.split('-');
+        const tStart = timeParts[0] || '';
+        const tEnd = timeParts[1] || '';
+
+        let fullName = l.name || '';
+        let typeDisplay = '';
+
+        const typeMatch = fullName.match(/\((Лек(?: \(off\))?|Лаб|ПЗ|Пр|Сем|Экз|Зач|Куср)\)$/i);
+        if (typeMatch) {
+            typeDisplay = typeMap[typeMatch[1]] || typeMatch[1];
+            fullName = fullName.replace(typeMatch[0], '').trim();
         }
 
-        function openThemeScreen() {
-            switchScreen(0);
-        }
+        const typeBadge = typeDisplay ? `<div class="lesson-type">${typeDisplay}</div>` : '';
+        const subText = mode === 'group' ? (l.teacher || '---') : `Группа: ${l.group || '---'}`;
+        const subIcon = mode === 'group' ? '👨‍🏫' : '👥';
 
-        function setTheme(theme) {
-            document.documentElement.setAttribute('data-theme', theme);
-            localStorage.setItem('vsu_theme', theme);
-            
-            const style = getComputedStyle(document.documentElement);
-            const b1 = document.querySelector('.blob-1');
-            const b2 = document.querySelector('.blob-2');
-            if(b1) b1.style.background = style.getPropertyValue('--blob1').trim();
-            if(b2) b2.style.background = style.getPropertyValue('--blob2').trim();
-            
-            const nav = document.querySelector('.bottom-nav');
-            if(nav) {
-                nav.style.background = style.getPropertyValue('--primary-grad');
-            }
-            
-            document.querySelectorAll('.theme-option').forEach(opt => {
-                opt.classList.remove('active-theme');
-            });
-            const activeOption = document.querySelector(`[onclick="setTheme('${theme}')"]`);
-            if(activeOption) activeOption.classList.add('active-theme');
-        }
-
-        function renderLessonRow(l, mode = 'group') {
-            const timeClean = (l.time || '').replace(/[()]/g, '');
-            const timeParts = timeClean.split('-');
-            const tStart = timeParts[0] || '';
-            const tEnd = timeParts[1] || '';
-
-            let fullName = l.name || '';
-            let typeDisplay = '';
-            
-            const typeMatch = fullName.match(/\((Лек(?: \(off\))?|Лаб|ПЗ|Пр|Сем|Экз|Зач|Куср)\)$/i);
-            if (typeMatch) {
-                typeDisplay = typeMap[typeMatch[1]] || typeMatch[1];
-                fullName = fullName.replace(typeMatch[0], '').trim();
-            }
-
-            const typeBadge = typeDisplay ? `<div class="lesson-type">${typeDisplay}</div>` : '';
-            const subText = mode === 'group' ? (l.teacher || '---') : `Группа: ${l.group || '---'}`;
-            const subIcon = mode === 'group' ? '👨‍🏫' : '👥';
-
-            return `
-                <div class="lesson-row">
-                    <div class="time-block">
-                        <span class="time-start">${tStart}</span>
-                        <span class="time-end">${tEnd}</span>
+        return `
+            <div class="lesson-row">
+                <div class="time-block">
+                    <span class="time-start">${tStart}</span>
+                    <span class="time-end">${tEnd}</span>
+                </div>
+                <div style="flex:1;">
+                    ${typeBadge}
+                    <div style="font-weight:800; font-size:15px; margin-bottom:4px; line-height:1.2;">${fullName}</div>
+                    <div style="display:flex; gap:10px; opacity:0.7; font-size:12px; font-weight:600;">
+                        <span>📍 ${l.room || '-'}</span>
+                        <span>${subIcon} ${subText}</span>
                     </div>
-                    <div style="flex: 1;">
-                        ${typeBadge}
-                        <div style="font-weight: 800; font-size: 15px; margin-bottom: 4px; line-height: 1.2;">${fullName}</div>
-                        <div style="display: flex; gap: 10px; opacity: 0.7; font-size: 12px; font-weight: 600;">
-                            <span>📍 ${l.room || '-'}</span>
-                            <span>${subIcon} ${subText}</span>
-                        </div>
+                </div>
+            </div>`;
+    }
+
+    async function loadSchedule(group) {
+        const track = document.getElementById('schedule-track');
+        track.innerHTML = '<div class="day-column"><div class="glass-card">Загрузка...</div></div>';
+        try {
+            const r = await fetch(`${API_BASE}/schedule/${encodeURIComponent(group)}`);
+            const data = await r.json();
+            const days = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
+
+            track.innerHTML = days.map(day => {
+                const lessons = data.schedule[day] || [];
+                return `<div class="day-column">
+                    <div class="glass-card" style="margin-bottom:20px;">
+                        <div style="font-weight:900; color:var(--primary-solid); border-bottom:1px solid var(--border); padding-bottom:10px; margin-bottom:15px; font-size:14px;">${day.toUpperCase()}</div>
+                        ${lessons.length ? lessons.map(l => renderLessonRow(l, 'group')).join('') : '<div style="opacity:0.5; padding:40px 0; text-align:center;">Пар нет</div>'}
                     </div>
                 </div>`;
-        }
+            }).join('');
 
-        async function loadSchedule(group) {
-            const track = document.getElementById('schedule-track');
-            track.innerHTML = '<div class="day-column"><div class="glass-card">Загрузка...</div></div>';
-            try {
-                const r = await fetch(`${API_BASE}/schedule/${encodeURIComponent(group)}`);
-                const data = await r.json();
-                const days = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
-                
-                track.innerHTML = days.map(day => {
-                    const lessons = data.schedule[day] || [];
-                    return `<div class="day-column">
-                        <div class="glass-card" style="margin-bottom: 20px;">
-                            <div style="font-weight:900; color:var(--primary-solid); border-bottom:1px solid var(--border); padding-bottom:10px; margin-bottom:15px; font-size:14px;">${day.toUpperCase()}</div>
-                            ${lessons.length ? lessons.map(l => renderLessonRow(l, 'group')).join('') : '<div style="opacity:0.5; padding:40px 0; text-align:center;">Пар нет</div>'}
-                        </div>
-                    </div>`;
-                }).join('');
-
-                const lastDay = localStorage.getItem('vsu_last_day');
-                if(lastDay !== null) {
-                    goToDay(parseInt(lastDay));
-                } else { 
-                    let d = new Date().getDay(); 
-                    goToDay(d === 0 ? 0 : d - 1); 
-                }
-                switchScreen(2);
-            } catch (e) { 
-                track.innerHTML = '<div class="day-column"><div class="glass-card">Ошибка загрузки</div></div>'; 
+            const lastDay = localStorage.getItem('vsu_last_day');
+            if (lastDay !== null) {
+                goToDay(parseInt(lastDay));
+            } else {
+                let d = new Date().getDay();
+                goToDay(d === 0 ? 0 : d - 1);
             }
+            switchScreen(2);
+        } catch (e) {
+            track.innerHTML = '<div class="day-column"><div class="glass-card">Ошибка загрузки</div></div>';
         }
+    }
 
-        async function searchTeacher() {
-            const nameInput = document.getElementById('teacher-input').value.trim();
-            if(nameInput.length < 3) return alert("Введите хотя бы 3 буквы фамилии");
-            const resDiv = document.getElementById('teacher-results');
-            resDiv.innerHTML = '<div class="glass-card">🔍 Поиск...</div>';
-            try {
-                const r = await fetch(`${API_BASE}/teacher/${encodeURIComponent(nameInput)}`);
-                const data = await r.json();
-                if(!data.schedule || Object.keys(data.schedule).length === 0) {
-                    resDiv.innerHTML = '<div class="glass-card">Не найден</div>';
-                    return;
-                }
-                teacherCache = {};
-                Object.entries(data.schedule).forEach(([day, lessons]) => {
-                    lessons.forEach(l => {
-                        const tName = l.teacher || "Неизвестно";
-                        if (!teacherCache[tName]) teacherCache[tName] = {};
-                        if (!teacherCache[tName][day]) teacherCache[tName][day] = [];
-                        teacherCache[tName][day].push(l);
-                    });
+    async function searchTeacher() {
+        const nameInput = document.getElementById('teacher-input').value.trim();
+        if (nameInput.length < 3) return alert("Введите хотя бы 3 буквы фамилии");
+        const resDiv = document.getElementById('teacher-results');
+        resDiv.innerHTML = '<div class="glass-card">🔍 Поиск...</div>';
+        try {
+            const r = await fetch(`${API_BASE}/teacher/${encodeURIComponent(nameInput)}`);
+            const data = await r.json();
+            if (!data.schedule || Object.keys(data.schedule).length === 0) {
+                resDiv.innerHTML = '<div class="glass-card">Не найден</div>';
+                return;
+            }
+            teacherCache = {};
+            Object.entries(data.schedule).forEach(([day, lessons]) => {
+                lessons.forEach(l => {
+                    const tName = l.teacher || "Неизвестно";
+                    if (!teacherCache[tName]) teacherCache[tName] = {};
+                    if (!teacherCache[tName][day]) teacherCache[tName][day] = [];
+                    teacherCache[tName][day].push(l);
                 });
-                const names = Object.keys(teacherCache).sort();
-                if (names.length === 1) renderTeacherSchedule(names[0]);
-                else {
-                    let html = '<div class="glass-card"><label class="field-label">НАЙДЕНО:</label>';
-                    names.forEach(n => {
-                        html += `<button class="action-btn" style="background:var(--card-bg); color:var(--text); border:1px solid var(--primary); margin-top:8px;" 
-                                onclick="renderTeacherSchedule('${n.replace(/'/g, "\\'")}')">${n}</button>`;
-                    });
-                    resDiv.innerHTML = html + '</div>';
-                }
-            } catch(e) { 
-                resDiv.innerHTML = '<div class="glass-card">Ошибка</div>'; 
-            }
-        }
-
-        function renderTeacherSchedule(tName) {
-            const resDiv = document.getElementById('teacher-results');
-            const sched = teacherCache[tName];
-            const days = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
-            let html = `<div style="text-align:center; font-weight:900; margin-bottom:15px; color:var(--primary-solid); font-size:18px;">${tName}</div>
-                        <button class="action-btn" style="background:#64748b; margin-bottom:20px;" onclick="searchTeacher()">⬅️ Назад</button>`;
-            
-            days.forEach((day, index) => {
-                if(sched[day]) {
-                    html += `<div class="glass-card teacher-result" style="animation-delay: ${index * 0.1}s;">
-                                <div style="font-weight:900; color:var(--primary-solid); border-bottom:1px solid var(--border); padding-bottom:8px; margin-bottom:12px; font-size:12px;">${day.toUpperCase()}</div>`;
-                    sched[day].sort((a,b) => a.time.localeCompare(b.time)).forEach(l => {
-                        html += renderLessonRow(l, 'teacher');
-                    });
-                    html += `</div>`;
-                }
             });
-            resDiv.innerHTML = html;
-        }
-
-        async function loadGroups(fac) {
-            const gSel = document.getElementById('group-select');
-            document.getElementById('group-area').style.display = 'block';
-            gSel.innerHTML = '<option>...</option>';
-            try {
-                const r = await fetch(`${API_BASE}/faculties/${encodeURIComponent(fac)}/groups`);
-                const data = await r.json();
-                gSel.innerHTML = '<option disabled selected>Выберите группу...</option>' + 
-                                data.groups.map(g => `<option value="${g}">${g}</option>`).join('');
-            } catch(e) { 
-                gSel.innerHTML = '<option>Ошибка</option>'; 
+            const names = Object.keys(teacherCache).sort();
+            if (names.length === 1) renderTeacherSchedule(names[0]);
+            else {
+                let html = '<div class="glass-card"><label class="field-label">НАЙДЕНО:</label>';
+                names.forEach(n => {
+                    html += `<button class="action-btn" style="background:var(--card-bg); color:var(--text); border:1px solid var(--primary); margin-top:8px;" 
+                            onclick="renderTeacherSchedule('${n.replace(/'/g, "\\'")}')">${n}</button>`;
+                });
+                resDiv.innerHTML = html + '</div>';
             }
+        } catch (e) {
+            resDiv.innerHTML = '<div class="glass-card">Ошибка</div>';
         }
+    }
 
-        async function init() {
-            const container = document.getElementById('screens-container');
-            container.style.transition = 'none';
-            // Показываем главный экран (индекс 1)
-            container.style.transform = 'translateX(-20%)';
+    function renderTeacherSchedule(tName) {
+        const resDiv = document.getElementById('teacher-results');
+        const sched = teacherCache[tName];
+        const days = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
+        let html = `<div style="text-align:center; font-weight:900; margin-bottom:15px; color:var(--primary-solid); font-size:18px;">${tName}</div>
+                    <button class="action-btn" style="background:#64748b; margin-bottom:20px;" onclick="searchTeacher()">⬅️ Назад</button>`;
+
+        days.forEach((day, index) => {
+            if (sched[day]) {
+                html += `<div class="glass-card teacher-result" style="animation-delay: ${index * 0.1}s;">
+                            <div style="font-weight:900; color:var(--primary-solid); border-bottom:1px solid var(--border); padding-bottom:8px; margin-bottom:12px; font-size:12px;">${day.toUpperCase()}</div>`;
+                sched[day].sort((a, b) => a.time.localeCompare(b.time)).forEach(l => {
+                    html += renderLessonRow(l, 'teacher');
+                });
+                html += `</div>`;
+            }
+        });
+        resDiv.innerHTML = html;
+    }
+
+    async function loadGroups(fac) {
+        const gSel = document.getElementById('group-select');
+        document.getElementById('group-area').style.display = 'block';
+        gSel.innerHTML = '<option>...</option>';
+        try {
+            const r = await fetch(`${API_BASE}/faculties/${encodeURIComponent(fac)}/groups`);
+            const data = await r.json();
+            gSel.innerHTML = '<option disabled selected>Выберите группу...</option>' +
+                data.groups.map(g => `<option value="${g}">${g}</option>`).join('');
+        } catch (e) {
+            gSel.innerHTML = '<option>Ошибка</option>';
+        }
+    }
+
+    document.getElementById('fac-select').onchange = (e) => {
+        localStorage.setItem('vsu_fac', e.target.value);
+        loadGroups(e.target.value);
+    };
+
+    document.getElementById('group-select').onchange = (e) => {
+        localStorage.setItem('vsu_group', e.target.value);
+        loadSchedule(e.target.value);
+    };
+
+    const swiperBox = document.getElementById('schedule-swiper');
+    if (swiperBox) {
+        swiperBox.addEventListener('touchstart', e => touchStartX = e.touches[0].clientX, { passive: true });
+        swiperBox.addEventListener('touchend', e => {
+            const diff = touchStartX - e.changedTouches[0].clientX;
+            if (Math.abs(diff) > 60) diff > 0 ? goToDay(currentDayIndex + 1) : goToDay(currentDayIndex - 1);
+        }, { passive: true });
+    }
+
+    // Инициализация
+    async function init() {
+        console.log('init started');
+        const container = document.getElementById('screens-container');
+        container.style.transition = 'none';
+        container.style.transform = 'translateX(-20%)';
+        
+        document.querySelectorAll('.nav-item').forEach((n, i) => {
+            n.classList.toggle('active', i === 0);
+        });
+        
+        setTheme(localStorage.getItem('vsu_theme') || 'light');
+        
+        setTimeout(() => {
+            container.style.transition = 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)';
+        }, 100);
+        
+        const fSel = document.getElementById('fac-select');
+        try {
+            console.log('Fetching faculties from', API_BASE + '/faculties');
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 15000); // таймаут 15 сек
+            const r = await fetch(`${API_BASE}/faculties`, { signal: controller.signal });
+            clearTimeout(timeoutId);
+            console.log('Response status:', r.status);
+            if (!r.ok) throw new Error(`HTTP error ${r.status}`);
+            const data = await r.json();
+            console.log('Faculties data:', data);
+            fSel.innerHTML = '<option disabled selected>Выберите факультет...</option>' + 
+                            data.faculties.map(f => `<option value="${f}">${f}</option>`).join('');
             
-            // Устанавливаем активный пункт навигации на главный (индекс 0)
-            document.querySelectorAll('.nav-item').forEach((n, i) => {
-                n.classList.toggle('active', i === 0);
-            });
-            
-            setTheme(localStorage.getItem('vsu_theme') || 'light');
-            
-            setTimeout(() => {
-                container.style.transition = 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)';
-            }, 100);
-            
-            const fSel = document.getElementById('fac-select');
-            try {
-                const r = await fetch(`${API_BASE}/faculties`);
-                const data = await r.json();
-                fSel.innerHTML = '<option disabled selected>Выберите факультет...</option>' + 
-                                data.faculties.map(f => `<option value="${f}">${f}</option>`).join('');
-                
-                const savedF = localStorage.getItem('vsu_fac'), 
-                    savedG = localStorage.getItem('vsu_group');
-                if (savedF) {
-                    fSel.value = savedF; 
-                    await loadGroups(savedF);
-                    if (savedG) { 
-                        document.getElementById('group-select').value = savedG; 
-                        // Загружаем расписание и переходим на экран 2
-                        loadSchedule(savedG);
-                    }
+            const savedF = localStorage.getItem('vsu_fac'), 
+                savedG = localStorage.getItem('vsu_group');
+            if (savedF) {
+                fSel.value = savedF; 
+                await loadGroups(savedF);
+                if (savedG) { 
+                    document.getElementById('group-select').value = savedG; 
+                    loadSchedule(savedG);
                 }
-            } catch (e) { 
-                fSel.innerHTML = '<option>Ошибка сети</option>'; 
             }
+        } catch (e) {
+            console.error('Ошибка загрузки факультетов:', e);
+            fSel.innerHTML = '<option>Ошибка сети. Попробуйте позже</option>';
         }
+    }
 
-        document.getElementById('fac-select').onchange = (e) => { 
-            localStorage.setItem('vsu_fac', e.target.value); 
-            loadGroups(e.target.value); 
-        };
-        
-        document.getElementById('group-select').onchange = (e) => { 
-            localStorage.setItem('vsu_group', e.target.value); 
-            loadSchedule(e.target.value);
-        };
-        
-        const swiperBox = document.getElementById('schedule-swiper');
-        if(swiperBox) {
-            swiperBox.addEventListener('touchstart', e => touchStartX = e.touches[0].clientX, {passive: true});
-            swiperBox.addEventListener('touchend', e => {
-                const diff = touchStartX - e.changedTouches[0].clientX;
-                if (Math.abs(diff) > 60) diff > 0 ? goToDay(currentDayIndex + 1) : goToDay(currentDayIndex - 1);
-            }, {passive: true});
-        }
-
-        init();
-    </script>
+    init();
+</script>
 
     <!-- Firebase подключение (модуль) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
-        import { 
-            getFirestore, 
-            doc, 
-            setDoc, 
-            getDoc, 
-            updateDoc, 
-            arrayUnion, 
-            arrayRemove, 
-            collection, 
-            query, 
-            where, 
+        import {
+            getFirestore,
+            doc,
+            setDoc,
+            getDoc,
+            updateDoc,
+            arrayUnion,
+            arrayRemove,
+            collection,
+            query,
+            where,
             getDocs,
             limit
         } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
@@ -1013,12 +1142,12 @@
         window.limit = limit;
     </script>
 
-    <!-- Новые функции для профилей и друзей -->
+    <!-- Полный функционал профилей, друзей, заметок, просмотра чужих профилей -->
     <script>
-        // Глобальная переменная для Telegram ID
+        // ========== НОВЫЙ ФУНКЦИОНАЛ (ПРОФИЛИ, ДРУЗЬЯ, ЗАМЕТКИ, ФОН) ==========
+
         let telegramUserId = null;
 
-        // Получение данных из Telegram WebApp
         (function initTelegram() {
             const tg = window.Telegram?.WebApp;
             if (tg) {
@@ -1033,16 +1162,30 @@
             }
         })();
 
-        // Инициализация профиля при первом входе
+        async function saveUserFacultyGroup(faculty, group) {
+            if (!telegramUserId) return;
+            try {
+                const userRef = doc(db, 'users', telegramUserId);
+                await updateDoc(userRef, { faculty, group });
+            } catch (e) { console.error('Error saving faculty/group:', e); }
+        }
+
+        async function saveUserTheme(theme) {
+            if (!telegramUserId) return;
+            try {
+                const userRef = doc(db, 'users', telegramUserId);
+                await updateDoc(userRef, { 'settings.theme': theme });
+            } catch (e) { console.error('Error saving theme:', e); }
+        }
+
         async function initUserProfile() {
             if (!telegramUserId) return;
 
-            const tg = window.Telegram?.WebApp;
-            const tgUser = tg?.initDataUnsafe?.user;
-            if (!tgUser) return;
+            const tg = window.Telegram?.WebApp?.initDataUnsafe?.user;
+            if (!tg) return;
 
-            const firstName = tgUser.first_name || '';
-            const lastName = tgUser.last_name || '';
+            const firstName = tg.first_name || '';
+            const lastName = tg.last_name || '';
             const displayName = [firstName, lastName].filter(Boolean).join(' ') || 'Пользователь';
 
             const userRef = doc(db, 'users', telegramUserId);
@@ -1051,8 +1194,8 @@
             if (!snap.exists()) {
                 await setDoc(userRef, {
                     displayName: displayName,
-                    username: tgUser.username || '',
-                    photo: tgUser.photo_url || '',
+                    username: tg.username || '',
+                    photo: tg.photo_url || '',
                     role: 'student',
                     friends: [],
                     friendRequests: [],
@@ -1060,248 +1203,292 @@
                     faculty: '',
                     group: '',
                     teacherName: '',
-                    settings: {},
+                    note: '',
+                    headerType: 'gradient',
+                    headerColor: '#2563eb',
+                    settings: { theme: localStorage.getItem('vsu_theme') || 'light' },
                     createdAt: new Date()
                 });
                 console.log('Профиль создан');
-                // Приветственное окно при первой регистрации
                 alert('👋 Добро пожаловать в ВГУ Mobile! Ваш профиль успешно создан.');
             } else {
                 const data = snap.data();
-                if (data.settings?.theme) {
-                    setTheme(data.settings.theme);
+                if (data.settings?.theme) setTheme(data.settings.theme);
+                if (data.faculty) {
+                    localStorage.setItem('vsu_fac', data.faculty);
+                    const facSelect = document.getElementById('fac-select');
+                    if (facSelect) facSelect.value = data.faculty;
+                    if (typeof loadGroups === 'function') loadGroups(data.faculty);
+                }
+                if (data.group) {
+                    localStorage.setItem('vsu_group', data.group);
+                    const groupSelect = document.getElementById('group-select');
+                    if (groupSelect) groupSelect.value = data.group;
                 }
             }
         }
 
-        // Поиск людей по имени
-        async function searchPeople(queryText) {
-            if (!queryText || queryText.length < 2) return [];
+        window.toggleEditFields = function() {
+            const role = document.getElementById('edit-role').value;
+            document.getElementById('edit-student-fields').style.display = role === 'student' ? 'block' : 'none';
+            document.getElementById('edit-teacher-fields').style.display = role === 'teacher' ? 'block' : 'none';
+        };
+
+        window.toggleHeaderType = function() {
+            const type = document.getElementById('edit-header-type').value;
+            document.getElementById('edit-header-color').style.display = type === 'solid' ? 'block' : 'none';
+        };
+
+        async function loadEditProfile() {
+            if (!telegramUserId) return;
+            const snap = await getDoc(doc(db, 'users', telegramUserId));
+            if (!snap.exists()) return;
+            const data = snap.data();
+            document.getElementById('edit-role').value = data.role || 'student';
+            toggleEditFields();
+            document.getElementById('edit-faculty').value = data.faculty || '';
+            document.getElementById('edit-group').value = data.group || '';
+            document.getElementById('edit-teacher-name').value = data.teacherName || '';
+            document.getElementById('edit-note').value = data.note || '';
+            document.getElementById('edit-header-type').value = data.headerType || 'gradient';
+            document.getElementById('edit-header-color-value').value = data.headerColor || '#2563eb';
+            toggleHeaderType();
+            // Обновить превью
+            updateHeaderPreview();
+        }
+        
+        // Добавить функцию для обновления превью
+        window.updateHeaderPreview = function() {
+            const type = document.getElementById('edit-header-type').value;
+            const color = document.getElementById('edit-header-color-value').value;
+            const preview = document.getElementById('header-preview');
+            if (!preview) {
+                // Если элемента превью нет, создадим его (можно добавить в HTML редактора)
+                return;
+            }
+            if (type === 'solid') {
+                preview.style.background = color;
+            } else {
+                preview.style.background = ''; // вернётся к CSS-градиенту
+                preview.style.background = 'var(--primary-grad)'; // или конкретный градиент
+            }
+        };
+        
+        // Добавить обработчик изменения color picker
+        document.getElementById('edit-header-color-value')?.addEventListener('input', updateHeaderPreview);
+        document.getElementById('edit-header-type')?.addEventListener('change', updateHeaderPreview);
+
+        window.saveProfile = async function() {
+            const role = document.getElementById('edit-role').value;
+            const faculty = document.getElementById('edit-faculty').value;
+            const group = document.getElementById('edit-group').value;
+            const teacherName = document.getElementById('edit-teacher-name').value;
+            const note = document.getElementById('edit-note').value;
+            const headerType = document.getElementById('edit-header-type').value;
+            const headerColor = document.getElementById('edit-header-color-value').value;
+            const userRef = doc(db, 'users', telegramUserId);
+            await updateDoc(userRef, { role, faculty, group, teacherName, note, headerType, headerColor });
+            alert('Профиль обновлён');
+            switchScreen(4);
+            loadProfileScreen();
+        };
+
+        async function loadProfileScreen() {
+            if (!telegramUserId) return;
+            const snap = await getDoc(doc(db, 'users', telegramUserId));
+            if (!snap.exists()) return;
+            const data = snap.data();
+        
+            document.getElementById('profile-name').textContent = data.displayName;
+            document.getElementById('profile-note').textContent = data.note || ' '; // пробел, чтобы не схлопывалось
+        
+            const headerBg = document.getElementById('profile-header-bg');
+            if (data.headerType === 'solid') {
+                headerBg.style.background = data.headerColor || '#2563eb';
+                document.getElementById('profile-header').classList.add('solid');
+            } else {
+                headerBg.style.background = ''; // используем CSS градиент
+                document.getElementById('profile-header').classList.remove('solid');
+            }
+        
+            if (data.photo) {
+                document.getElementById('profile-photo').src = data.photo;
+            } else {
+                document.getElementById('profile-photo').src = ''; // можно поставить заглушку
+            }
+        }
+
+        window.editNote = function() {
+            switchScreen(5);
+            setTimeout(() => document.getElementById('edit-note').focus(), 300);
+        };
+
+        window.performSearch = async function() {
+            const queryText = document.getElementById('search-people-input').value.trim();
+            if (queryText.length < 2) return alert('Введите минимум 2 символа');
             const q = queryText.toLowerCase();
             const usersRef = collection(db, 'users');
             const q1 = query(usersRef, where('name_lower', '>=', q), where('name_lower', '<=', q + '\uf8ff'), limit(20));
-            const snapshot = await getDocs(q1);
+            const snap = await getDocs(q1);
             const results = [];
-            snapshot.forEach(doc => {
-                if (doc.id !== telegramUserId) {
-                    results.push({ id: doc.id, ...doc.data() });
-                }
+            snap.forEach(doc => { if (doc.id !== telegramUserId) results.push({ id: doc.id, ...doc.data() }); });
+            const container = document.getElementById('search-people-results');
+            if (results.length === 0) {
+                container.innerHTML = '<div class="glass-card">Ничего не найдено</div>';
+                return;
+            }
+            let html = '';
+            results.forEach(u => {
+                html += `
+                    <div class="glass-card" style="flex-direction:row; align-items:center; flex-wrap:wrap;">
+                        <img src="${u.photo || ''}" style="width:40px; height:40px; border-radius:20px; margin-right:10px;">
+                        <span style="flex:1; cursor:pointer;" onclick="viewProfile('${u.id}')">${u.displayName}</span>
+                        <div style="display:flex; gap:5px; margin-left:auto;">
+                            <button class="action-btn compact-btn" onclick="sendFriendRequest('${u.id}')"><div class="icon add-friend-icon"></div> Друг</button>
+                            <button class="action-btn compact-btn" onclick="openTelegram('${u.username}')"><div class="icon add-friend-icon"></div> Написать</button>
+                        </div>
+                    </div>`;
             });
-            return results;
-        }
+            container.innerHTML = html;
+        };
 
-        // Отправка заявки в друзья
-        async function sendFriendRequest(targetUserId) {
-            if (!telegramUserId || !targetUserId) return;
-            const targetRef = doc(db, 'users', targetUserId);
-            await updateDoc(targetRef, {
-                friendRequests: arrayUnion(telegramUserId)
-            });
-            alert('Заявка отправлена');
-        }
-
-        // Принятие заявки
-        async function acceptFriendRequest(requesterId) {
-            if (!telegramUserId || !requesterId) return;
-            const myRef = doc(db, 'users', telegramUserId);
-            const requesterRef = doc(db, 'users', requesterId);
-
-            await updateDoc(myRef, {
-                friendRequests: arrayRemove(requesterId)
-            });
-
-            await updateDoc(myRef, {
-                friends: arrayUnion(requesterId)
-            });
-            await updateDoc(requesterRef, {
-                friends: arrayUnion(telegramUserId)
-            });
-            alert('Заявка принята');
-        }
-
-        // Отклонение заявки
-        async function rejectFriendRequest(requesterId) {
+        async function loadFriendsScreen() {
             if (!telegramUserId) return;
-            const myRef = doc(db, 'users', telegramUserId);
-            await updateDoc(myRef, {
-                friendRequests: arrayRemove(requesterId)
-            });
-            alert('Заявка отклонена');
+            const userSnap = await getDoc(doc(db, 'users', telegramUserId));
+            if (!userSnap.exists()) return;
+            const friendIds = userSnap.data().friends || [];
+            if (friendIds.length === 0) {
+                document.getElementById('friends-list-container').innerHTML = '<div class="glass-card">У вас пока нет друзей</div>';
+                return;
+            }
+            let html = '';
+            for (let id of friendIds) {
+                const snap = await getDoc(doc(db, 'users', id));
+                if (snap.exists()) {
+                    const u = snap.data();
+                    html += `
+                        <div class="glass-card" style="flex-direction:row; align-items:center; flex-wrap:wrap;">
+                            <img src="${u.photo || ''}" style="width:40px; height:40px; border-radius:20px; margin-right:10px;">
+                            <span style="flex:1; cursor:pointer;" onclick="viewProfile('${id}')">${u.displayName}</span>
+                            <div style="display:flex; gap:5px; margin-left:auto;">
+                                <button class="action-btn compact-btn" onclick="openTelegram('${u.username}')"><div class="icon add-friend-icon"></div> Написать</button>
+                                <button class="action-btn compact-btn btn-danger" onclick="removeFriend('${id}')"><div class="icon warning-icon"></div> Удалить</button>
+                            </div>
+                        </div>`;
+                }
+            }
+            document.getElementById('friends-list-container').innerHTML = html || '<div class="glass-card">Ошибка загрузки</div>';
         }
 
-        // Удаление из друзей
-        async function removeFriend(friendId) {
+        let lastViewedUserId = null;
+        window.viewProfile = async function(userId) {
+            lastViewedUserId = userId;
+            const snap = await getDoc(doc(db, 'users', userId));
+            if (!snap.exists()) return;
+            const u = snap.data();
+            const myId = telegramUserId;
+            const isFriend = u.friends && u.friends.includes(myId);
+            const hasRequest = u.friendRequests && u.friendRequests.includes(myId);
+            const isMe = myId === userId;
+            let actions = '';
+            if (!isMe) {
+                if (isFriend) {
+                    actions = `
+                        <button class="action-btn btn-danger" onclick="removeFriend('${userId}')"><div class="icon warning-icon"></div> Удалить из друзей</button>
+                        <button class="action-btn" onclick="openTelegram('${u.username}')"><div class="icon add-friend-icon"></div> Написать</button>`;
+                } else if (hasRequest) {
+                    actions = `<button class="action-btn" disabled>Заявка отправлена</button>`;
+                } else {
+                    actions = `
+                        <button class="action-btn" onclick="sendFriendRequest('${userId}')"><div class="icon add-friend-icon"></div> Добавить в друзья</button>
+                        <button class="action-btn" onclick="openTelegram('${u.username}')"><div class="icon add-friend-icon"></div> Написать</button>`;
+                }
+            }
+        
+            const headerStyle = u.headerType === 'solid' ? `background: ${u.headerColor || '#2563eb'};` : 'background: var(--primary-grad);';
+        
+            const content = `
+                <div class="glass-card profile-header" style="padding:0;">
+                    <div class="profile-header-bg" style="${headerStyle} height:120px;"></div>
+                    <div class="profile-avatar-wrapper">
+                        <img src="${u.photo || ''}" class="profile-avatar" style="width:100px; height:100px;">
+                    </div>
+                    <h2 class="profile-name">${u.displayName}</h2>
+                    <p class="profile-note">${u.note || ' '}</p>
+                </div>
+                ${u.faculty ? `<div class="glass-card">Факультет: ${u.faculty} ${u.group ? `, группа ${u.group}` : ''}</div>` : ''}
+                ${u.teacherName ? `<div class="glass-card">Преподаватель: ${u.teacherName}</div>` : ''}
+                <div class="double-button-field">${actions}</div>
+            `;
+            document.getElementById('view-profile-content').innerHTML = content;
+            switchScreen(8);
+        };
+
+        window.goBackFromView = function() {
+            switchScreen(7); // возвращаем на поиск людей (можно улучшить)
+        };
+
+        window.sendFriendRequest = async function(targetUserId) {
+            if (!telegramUserId || !targetUserId) return;
+            await updateDoc(doc(db, 'users', targetUserId), { friendRequests: arrayUnion(telegramUserId) });
+            alert('Заявка отправлена');
+            if (document.getElementById('search-people-results')) performSearch();
+        };
+
+        window.removeFriend = async function(friendId) {
             if (!telegramUserId) return;
             const myRef = doc(db, 'users', telegramUserId);
             const friendRef = doc(db, 'users', friendId);
-
-            await updateDoc(myRef, {
-                friends: arrayRemove(friendId)
-            });
-            await updateDoc(friendRef, {
-                friends: arrayRemove(telegramUserId)
-            });
+            await updateDoc(myRef, { friends: arrayRemove(friendId) });
+            await updateDoc(friendRef, { friends: arrayRemove(telegramUserId) });
             alert('Пользователь удалён из друзей');
-        }
+            if (document.getElementById('friends-list-container')) loadFriendsScreen();
+            if (lastViewedUserId === friendId) viewProfile(friendId);
+        };
 
-        // Открыть Telegram-чат
-        function openTelegram(username) {
+        window.openTelegram = function(username) {
             if (!username) {
                 alert('У пользователя нет username');
                 return;
             }
             window.location.href = `tg://resolve?domain=${username}`;
             setTimeout(() => window.open(`https://t.me/${username}`, '_blank'), 500);
-        }
+        };
 
-        // Загрузка данных на экран профиля
-        async function loadProfileScreen() {
-            if (!telegramUserId) return;
-
-            const userRef = doc(db, 'users', telegramUserId);
-            const snap = await getDoc(userRef);
-            if (!snap.exists()) return;
-
-            const data = snap.data();
-            document.getElementById('profile-name').textContent = data.displayName;
-            document.getElementById('profile-role').textContent = data.role === 'student' ? 'Студент' : 'Преподаватель';
-            document.getElementById('profile-username').textContent = data.username ? '@' + data.username : '';
-            if (data.photo) {
-                document.getElementById('profile-photo').src = data.photo;
-            }
-
-            if (data.friends && data.friends.length > 0) {
-                loadFriendsList(data.friends);
-            } else {
-                document.getElementById('friends-list').innerHTML = '<p>У вас пока нет друзей</p>';
-            }
-
-            if (data.friendRequests && data.friendRequests.length > 0) {
-                loadFriendRequests(data.friendRequests);
-            } else {
-                document.getElementById('requests-section').style.display = 'none';
-            }
-        }
-
-        async function loadFriendsList(friendIds) {
-            let html = '';
-            for (let id of friendIds) {
-                const friendRef = doc(db, 'users', id);
-                const snap = await getDoc(friendRef);
-                if (snap.exists()) {
-                    const data = snap.data();
-                    html += `
-                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-                            <img src="${data.photo || ''}" style="width: 40px; height: 40px; border-radius: 20px; object-fit: cover;">
-                            <span style="flex:1;">${data.displayName}</span>
-                            <button class="action-btn" style="width: auto;" onclick="openTelegram('${data.username}')">Написать</button>
-                            <button class="action-btn btn-danger" style="width: auto;" onclick="removeFriend('${id}')">Удалить</button>
-                        </div>
-                    `;
-                }
-            }
-            document.getElementById('friends-list').innerHTML = html || '<p>Не удалось загрузить друзей</p>';
-        }
-
-        async function loadFriendRequests(requestIds) {
-            document.getElementById('requests-section').style.display = 'block';
-            let html = '';
-            for (let id of requestIds) {
-                const userRef = doc(db, 'users', id);
-                const snap = await getDoc(userRef);
-                if (snap.exists()) {
-                    const data = snap.data();
-                    html += `
-                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-                            <img src="${data.photo || ''}" style="width: 40px; height: 40px; border-radius: 20px;">
-                            <span style="flex:1;">${data.displayName}</span>
-                            <button class="action-btn" style="width: auto;" onclick="acceptFriendRequest('${id}')">✓ Принять</button>
-                            <button class="action-btn btn-danger" style="width: auto;" onclick="rejectFriendRequest('${id}')">✗ Отклонить</button>
-                        </div>
-                    `;
-                }
-            }
-            document.getElementById('requests-list').innerHTML = html;
-        }
-
-        // Поиск и отображение результатов
-        async function performSearch() {
-            const queryText = document.getElementById('search-people-input').value.trim();
-            if (queryText.length < 2) {
-                alert('Введите минимум 2 символа');
-                return;
-            }
-            const results = await searchPeople(queryText);
-            const container = document.getElementById('search-results');
-            if (results.length === 0) {
-                container.innerHTML = '<p>Ничего не найдено</p>';
-                return;
-            }
-            let html = '';
-            results.forEach(user => {
-                html += `
-                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-                        <img src="${user.photo || ''}" style="width: 40px; height: 40px; border-radius: 20px;">
-                        <span style="flex:1;">${user.displayName}</span>
-                        <button class="action-btn" style="width: auto;" onclick="sendFriendRequest('${user.id}')">➕ Друг</button>
-                        <button class="action-btn" style="width: auto;" onclick="openTelegram('${user.username}')">✉️ Написать</button>
-                    </div>
-                `;
-            });
-            container.innerHTML = html;
-        }
-
-        // Переопределяем функцию switchScreen, чтобы добавить вызов loadProfileScreen для экрана 4
+        // Переопределение switchScreen с учётом новых экранов
         const originalSwitchScreen = window.switchScreen;
         window.switchScreen = function(idx) {
             const nav = document.querySelector('.bottom-nav');
-            if (idx === 0) {
-                nav.classList.add('hidden');
-            } else {
-                nav.classList.remove('hidden');
-            }
-            
-            document.getElementById('screens-container').style.transform = `translateX(-${idx * 20}%)`;
-            
-            const navIndexMap = {
-                0: null,
-                1: 0,
-                2: 1,
-                3: 2,
-                4: 3
-            };
+            if (idx === 0) nav.classList.add('hidden');
+            else nav.classList.remove('hidden');
+
+            document.getElementById('screens-container').style.transform = `translateX(-${idx * (100/9)}%)`;
+
+            const navIndexMap = { 0: null, 1: 0, 2: 1, 3: 2, 4: 3, 5: null, 6: null, 7: null, 8: null };
             document.querySelectorAll('.nav-item').forEach((n, i) => {
                 n.classList.toggle('active', i === navIndexMap[idx]);
             });
-            
-            const currentScreen = document.querySelectorAll('.screen')[idx];
-            if (currentScreen) {
-                const cards = currentScreen.querySelectorAll('.glass-card');
-                cards.forEach(card => {
-                    card.style.animation = 'none';
-                    card.offsetHeight;
-                    card.style.animation = 'fadeInUp 0.3s ease forwards';
+
+            const screen = document.querySelectorAll('.screen')[idx];
+            if (screen) {
+                screen.querySelectorAll('.glass-card').forEach(c => {
+                    c.style.animation = 'none';
+                    c.offsetHeight;
+                    c.style.animation = 'fadeInUp 0.3s ease forwards';
                 });
             }
 
-            if (idx === 4) {
-                loadProfileScreen();
-            }
+            if (idx === 4) loadProfileScreen();
+            if (idx === 5) loadEditProfile();
+            if (idx === 6) loadFriendsScreen();
+            if (idx === 7) document.getElementById('search-people-results').innerHTML = '';
         };
 
-        // Вызов инициализации профиля после загрузки страницы
+        // Инициализация профиля после загрузки
         setTimeout(() => {
-            if (telegramUserId) {
-                initUserProfile();
-            } else {
-                console.log('Telegram ID не получен, возможно приложение запущено вне Telegram');
-            }
+            if (telegramUserId) initUserProfile();
+            else console.log('Telegram ID не получен (возможно, не в Telegram)');
         }, 1000);
-
-        // Заглушка для функции редактирования профиля
-        window.editProfile = function() {
-            alert('Редактирование профиля будет доступно позже');
-        };
     </script>
 </body>
 </html>

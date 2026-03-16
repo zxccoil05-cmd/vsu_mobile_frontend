@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>ВГУ Mobile</title>
+    <!-- Telegram WebApp SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+    /* 1. СИСТЕМА ПЕРЕМЕННЫХ И ТЕМ */
+    
+    @import url('https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&family=LINE+Seed+JP&display=swap');
+    :root {
+        --bg: #f1f5f9; 
+        --primary: #2563eb; 
+        --primary-solid: #2563eb;
+        --primary-grad: linear-gradient(135deg, #2563eb, #3b82f6);
+        --glass: rgba(226, 232, 240, 0.7); 
+        --glass-thick: rgba(241, 245, 249, 0.98);
+        --border: rgba(148, 163, 184, 0.3); 
+        --text: #0f172a;
+        --card-bg: #ffffff; 
+        --blob1: #3b82f6; 
+        --blob2: #93c5fd;
+        --vh: 1vh;
+    }
+
+    [data-theme="dark"] { 
+        --bg: #343434; --primary: #969696; --primary-solid: #9c9c9c; --primary-grad: linear-gradient(135deg, #6a6a6a, #7c7c7c);
+        --text: #f1f5f9; --card-bg: #3e3e3e; --blob1: #282828; --blob2: #363636; 
+        --glass: rgba(48, 48, 48, 0.7); --glass-thick: #141414; --border: rgba(88, 88, 88, 0.8); 
+    }
+    [data-theme="red"] { 
+        --bg: #450a0a; --primary: #ef4444; --primary-solid: #ef4444; --primary-grad: linear-gradient(135deg, #ef4444, #f87171);
+        --text: #fee2e2; --card-bg: #7f1d1d; --blob1: #991b1b; --blob2: #450a0a; 
+        --border: #991b1b; --glass: rgba(127, 29, 29, 0.6); --glass-thick: #450a0a; 
+    }
+    [data-theme="neon"] { 
+        --bg: #000000; --primary: #06b6d4; --primary-solid: #06b6d4; --primary-grad: linear-gradient(135deg, #06b6d4, #22d3ee);
+        --text: #cffafe; --card-bg: #083344; --blob1: #0e7490; --blob2: #000000; 
+        --border: #06b6d4; --glass: rgba(8, 145, 178, 0.2); --glass-thick: #000000; 
+    }
+    [data-theme="pink"] { 
+        --bg: #fdf2f8; --primary: #db2777; --primary-solid: #db2777; --primary-grad: linear-gradient(135deg, #db2777, #f472b6);
+        --text: #831843; --card-bg: #ffffff; --blob1: #f472b6; --blob2: #fbcfe8; 
+        --border: #f9a8d4; --glass: rgba(251, 207, 232, 0.6); --glass-thick: #fdf2f8; 
+    }
+    [data-theme="dark-pink"] { 
+        --bg: #1a0f1a;
+        --primary: #ff69b4;
+        --primary-solid: #ff69b4;
+        --primary-grad: linear-gradient(135deg, #ff69b4, #ff1493);
+        --text: #ffe4f2;
+        --card-bg: #2a1a2a;
+        --blob1: #ff1493;
+        --blob2: #ff69b4;
+        --glass: rgba(42, 26, 42, 0.7);
+        --border: #ff69b4;
+    }
+    [data-theme="gray"] { 
+        --bg: #1f2937; --primary: #9ca3af; --primary-solid: #9ca3af; --primary-grad: linear-gradient(135deg, #9ca3af, #d1d5db);
+        --text: #f9fafb; --card-bg: #374151; --blob1: #111827; --blob2: #4b5563; 
+        --border: #4b5563; --glass: rgba(55, 65, 81, 0.7); --glass-thick: #1f2937; 
+    }
+    [data-theme="yellow"] { 
+        --bg: #fffbeb; --primary: #d97706; --primary-solid: #d97706; --primary-grad: linear-gradient(135deg, #d97706, #fbbf24);
+        --text: #78350f; --card-bg: #ffffff; --blob1: #fbbf24; --blob2: #fef3c7; 
+        --border: #fcd34d; --glass: rgba(254, 243, 199, 0.7); --glass-thick: #fffbeb; 
+    }
+    [data-theme="forest"] { 
+        --bg: #064e3b; --primary: #10b981; --primary-solid: #10b981; --primary-grad: linear-gradient(135deg, #10b981, #34d399);
+        --text: #ecfdf5; --card-bg: #065f46; --blob1: #064e3b; --blob2: #065f46; 
+        --border: rgba(20, 184, 166, 0.3); --glass: rgba(6, 78, 59, 0.7); --glass-thick: #022c22; 
+    }
+
+    /* 2. БАЗОВЫЕ СТИЛИ */
+    * { 
+        box-sizing: border-box; 
+        -webkit-tap-highlight-color: transparent; 
+        outline: none;
+        font-family: "Balsamiq Sans", sans-serif;
+        font-weight: 700;
+        font-style: normal;
+    }
+
+    body {
+        font-family: 'LINE Seed JP', sans-serif;
+        font-weight: 700;
+        margin: 0; 
+        padding: 0;
+        background: var(--bg); 
+        color: var(--text);
+        height: 100vh;
+        width: 100vw; 
+        overflow: hidden;
+        transition: background 0.4s ease, color 0.4s ease;
+    }
+
+    /* ФОНОВЫЕ ПЯТНА */
+    .background-blobs { 
+        position: fixed; 
+        inset: 0; 
+        z-index: -1; 
+        overflow: hidden; 
+        isolation: isolate;
+        background: var(--bg); 
+    }
+    .blob { 
+        position: absolute; 
+        border-radius: 50%; 
+        filter: blur(60px); 
+        opacity: 0.4; 
+        transition: background 0.8s ease; 
+    }
+    .blob-1 { 
+        width: 400px; 
+        height: 400px; 
+        background: var(--blob1); 
+        top: -100px; 
+        left: -100px; 
+    }
+    .blob-2 { 
+        width: 300px; 
+        height: 300px; 
+        background: var(--blob2); 
+        bottom: -50px; 
+        right: -50px; 
+    }
+
+    .app-viewport { 
+        width: 100%; 
+        height: 100%; 
+        display: flex; 
+        flex-direction: column; 
+        overflow: hidden;
+    }
+
+    .theme-header {
+        display: flex;
+        align-items: center;
+        padding: 20px;
+        gap: 20px;
+        background: var(--glass);
+        backdrop-filter: blur(10px);
+        border: 1px solid var(--border); 
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        border-radius: 20px;
+    }
+
+    .back-btn {
+        background: none;
+        border: none;
+        font-size: 28px;
+        color: var(--text);
+        cursor: pointer;
+        padding: 0 10px;
+    }
+
+    .theme-option {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px;
+        border-bottom: 1px solid var(--border);
+        cursor: pointer;
+        font-weight: 600;
+    }
+
+    .theme-option:last-child {
+        border-bottom: none;
+    }
+
+    .check {
+        color: var(--primary);
+        font-weight: 900;
+        font-size: 20px;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+    }
+
+    .theme-option.active-theme .check {
+        opacity: 1;
+    }
+
+    /* ЛОГОТИП */
+    .header {
+        padding: 20px 0;
+        width: 100%;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    .logo {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .logo-img {
+        width: 47px;
+        height: 47px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+    }
+
+    .logo-text {
+        font-size: 28px;
+        font-weight: 700;
+        background: var(--primary-grad);
+        background-clip: text;
+        color: transparent;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    /* КОНТЕЙНЕР ЭКРАНОВ */
+    .screens-container { 
+        display: flex; 
+        width: 500%; 
+        height: 100%;
+        transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1); 
+        margin-top: 0;
+    }
+
+    .screen { 
+        width: 20%; 
+        height: 100%; 
+        overflow-y: auto; 
+        padding: 0 20px; 
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* КАРТОЧКИ И ПОЛЯ */
+    .glass-card {
+        background: var(--glass); 
+        backdrop-filter: blur(20px); 
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--border); 
+        border-radius: 24px;
+        padding: 20px; 
+        margin-bottom: 15px; 
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        animation: fadeInUp 0.3s ease forwards;
+    }
+
+    .select-bar {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .field-label {
+        font-weight: 700;
+        color: var(--primary-grad);
+    }
+
+    select, .search-input {
+        width: 100%; 
+        padding: 16px; 
+        border-radius: 16px; 
+        border: 1px solid var(--border); 
+        background: var(--card-bg); 
+        color: var(--text); 
+        font-weight: 700; 
+        font-family: inherit; 
+        font-size: 16px;
+        margin-top: 10px; 
+        appearance: none;
+    }
+
+    .action-btn {
+        width: 100%; 
+        margin-top: 12px; 
+        padding: 16px; 
+        border-radius: 16px;
+        background: var(--primary-grad); 
+        color: white; 
+        border: none; 
+        font-weight: 800;
+        font-size: 14px; 
+        cursor: pointer; 
+        transition: 0.2s; 
+        font-family: inherit;
+    }
+    .btn-danger { 
+        background: #ef4444 !important; 
+    }
+
+    .double-button-field {
+        display: flex;
+        width: 100%;
+        gap: 15px;
+    }
+
+    .contact-button {
+        flex: 1;
+    }
+
+    /* ШАПКА РАСПИСАНИЯ */
+    .days-tabs { 
+        display: flex; 
+        gap: 6px; 
+        position: sticky; 
+        top: 0; 
+        z-index: 100;
+        padding: 10px; 
+        margin: 10px 0;
+        background: var(--glass); 
+        backdrop-filter: blur(15px); 
+        -webkit-backdrop-filter: blur(15px);
+        border-radius: 20px; 
+        border: 1px solid var(--border);
+        height: 60px;
+    }
+    .day-tab {
+        flex: 1; 
+        text-align: center; 
+        padding: 10px 0; 
+        border-radius: 12px;
+        background: transparent; 
+        border: none; 
+        color: var(--text); 
+        opacity: 0.6;
+        font-size: 11px; 
+        font-weight: 800; 
+        transition: all 0.3s ease;
+    }
+    .day-tab.active { 
+        background: var(--primary-grad); 
+        color: white; 
+        opacity: 1;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    /* РАСПИСАНИЕ (SWIPER) */
+    #schedule-swiper { 
+        flex: 1; 
+        overflow: hidden; 
+        width: 100%; 
+        margin-top: 0; 
+        padding-bottom: 100px;
+    }
+    .swiper-track { 
+        display: flex; 
+        width: 600%; 
+        transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1); 
+    }
+    .day-column { 
+        width: 16.666%; 
+        height: auto; 
+        min-height: 100%;
+        padding: 10px 5px 0px 5px; 
+        -webkit-overflow-scrolling: touch; 
+        scroll-behavior: smooth;
+    }
+    .day-column::-webkit-scrollbar { 
+        width: 0; 
+    }
+
+    /* ПАРЫ */
+    .lesson-row { 
+        display: flex; 
+        gap: 16px; 
+        padding: 18px 0; 
+        border-bottom: 1px solid var(--border); 
+        transition: background 0.4s ease, opacity 0.3s ease, transform 0.3s ease;
+        opacity: 1;
+    }
+    .lesson-row:last-child { 
+        border-bottom: none; 
+    }
+
+    .time-block { 
+        display: flex; 
+        flex-direction: column; 
+        align-items: center; 
+        justify-content: center; 
+        min-width: 60px; 
+    }
+    .time-start { 
+        font-size: 19px; 
+        background: var(--primary-grad); 
+        -webkit-background-clip: text; 
+        -webkit-text-fill-color: transparent;  
+        font-weight: 900; 
+    }
+    .time-end { 
+        font-size: 11px; 
+        font-weight: 700; 
+        color: var(--text); 
+        opacity: 0.5;
+    }
+
+    .lesson-type { 
+        font-size: 10px; 
+        font-weight: 900; 
+        text-transform: uppercase; 
+        letter-spacing: 0.8px; 
+        padding: 4px 10px; 
+        border-radius: 8px;
+        display: inline-block; 
+        margin-bottom: 8px;
+        background: var(--card-bg); 
+        color: var(--primary-grad);
+        border: 1px solid var(--primary-solid);
+    }
+    .lesson-name { 
+        font-weight: 800; 
+        font-size: 15px; 
+        color: var(--text); 
+        margin-bottom: 4px; 
+        display: block; 
+    }
+
+    /* НИЖНЯЯ НАВИГАЦИЯ */
+    .bottom-nav {
+        position: fixed; 
+        bottom: 20px; 
+        left: 20px;
+        right: 20px;
+        width: auto;
+        height: 75px;
+        background: var(--primary-grad);
+        border: 1px solid var(--primary-solid);
+        display: flex;
+        justify-content: space-around;
+        border-radius: 24px;
+        z-index: 1000;
+        align-items: center;
+        gap: 0;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        transition: background 0.4s ease, opacity 0.3s ease, transform 0.3s ease;
+        opacity: 1;
+        transform: translateY(0);
+        padding: 0 10px;
+    }
+
+    .bottom-nav.hidden {
+        opacity: 0;
+        transform: translateY(20px);
+        pointer-events: none;
+    }
+
+    .nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        text-align: center;
+        flex: 1;
+        color: rgba(255,255,255,0.6);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .nav-item:not(:last-child)::after {
+        content: '';
+        position: absolute;
+        right: 0;
+        top: 5%;
+        height: 90%;
+        width: 1px;
+        background: rgba(255, 255, 255, 0.3);
+        pointer-events: none;
+    }
+
+    .nav-item.active {
+        color: white;
+    }
+
+    .nav-item.active span:first-child {
+        transform: scale(1.05);
+        transition: transform 0.3s ease;
+    }
+
+    .nav-item.active span:last-child {
+        transform: scale(1.05);
+        transition: transform 0.3s ease;
+    }
+
+    .nav-item span:first-child {
+        font-size: 20px;
+        transition: transform 0.3s ease;
+    }
+
+    .nav-item span:last-child {
+        font-size: 11px;
+        font-weight: 700;
+        margin-top: 2px;
+        transition: transform 0.3s ease;
+    }
+
+    /* СКРОЛЛ КОНТЕНТА */
+    .content-scroll { 
+        flex: 1; 
+        overflow-y: auto; 
+        padding-bottom: 100px; 
+    }
+
+    /* Анимация появления */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .teacher-result {
+        animation: fadeInUp 0.3s ease forwards;
+    }
+    </style>
+</head>
+<body>
+    <div class="background-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <div class="app-viewport">
+        <div class="screens-container" id="screens-container">
+            <!-- Экран выбора темы (индекс 0) -->
+            <div class="screen" id="theme-screen">
+                <div class="theme-header">
+                    <button class="back-btn" onclick="switchScreen(1)">←</button>
+                    <h2>Выберите тему</h2>
+                </div>
+                <div class="content-scroll">
+                    <div class="glass-card">
+                        <div class="theme-option" onclick="setTheme('light')">
+                            <span>☀️ Светлая</span>
+                            <span class="check" id="check-light">✓</span>
+                        </div>
+                        <div class="theme-option" onclick="setTheme('dark')">
+                            <span>🌙 Темная</span>
+                            <span class="check" id="check-dark">✓</span>
+                        </div>
+                        <div class="theme-option" onclick="setTheme('forest')">
+                            <span>🌲 Лесная</span>
+                            <span class="check" id="check-forest">✓</span>
+                        </div>
+                        <div class="theme-option" onclick="setTheme('red')">
+                            <span>🔥 Рубиновая</span>
+                            <span class="check" id="check-red">✓</span>
+                        </div>
+                        <div class="theme-option" onclick="setTheme('neon')">
+                            <span>💚 Неоновая</span>
+                            <span class="check" id="check-neon">✓</span>
+                        </div>
+                        <div class="theme-option" onclick="setTheme('pink')">
+                            <span>🌸 Розовая</span>
+                            <span class="check" id="check-pink">✓</span>
+                        </div>
+                        <div class="theme-option" onclick="setTheme('dark-pink')">
+                            <span>🌸 Розовая (Темная)</span>
+                            <span class="check" id="check-dark-pink">✓</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Главный экран (индекс 1) -->
+            <div class="screen" id="main-screen">
+                <header class="header">
+                    <div class="container">
+                        <div class="logo">
+                            <img src="img/logo.png" class="logo-img" alt="logo">
+                            <span class="logo-text">ВГУ Mobile</span>
+                        </div>
+                    </div>
+                </header>
+                <div class="content-scroll">
+                    <div class="glass-card">
+                        <div class="select-bar">
+                            <label class="field-label">ФАКУЛЬТЕТ</label>
+                            <select id="fac-select"><option>Загрузка...</option></select>
+                        </div>
+                        
+                        <div id="group-area" style="display:none;">
+                            <div class="select-bar">
+                                <label class="field-label">ГРУППА</label>
+                                <select id="group-select"></select>
+                            </div>
+                            
+                            <button class="action-btn" onclick="openThemeScreen()">🎨 Настроить тему</button>
+                            
+                            <button class="action-btn" onclick="window.open('https://t.me/vsu_mobile', '_blank')">📢 Канал по улучшению</button>
+                            <button class="action-btn btn-danger" onclick="window.open('https://t.me/wch8h', '_blank')">⚠️ Нашли ошибку?</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Экран расписания (индекс 2) -->
+            <div class="screen" id="schedule-screen">
+                <div class="days-tabs" id="days-tabs">
+                    <div class="day-tab" onclick="goToDay(0)">ПН</div>
+                    <div class="day-tab" onclick="goToDay(1)">ВТ</div>
+                    <div class="day-tab" onclick="goToDay(2)">СР</div>
+                    <div class="day-tab" onclick="goToDay(3)">ЧТ</div>
+                    <div class="day-tab" onclick="goToDay(4)">ПТ</div>
+                    <div class="day-tab" onclick="goToDay(5)">СБ</div>
+                </div>
+                <div id="schedule-swiper">
+                    <div class="swiper-track" id="schedule-track"></div>
+                </div>
+            </div>
+
+            <!-- Экран поиска (индекс 3) -->
+            <div class="screen" id="search-screen">
+                <div class="content-scroll">
+                    <h1 class="logo" style="margin: 20px 0;">Поиск</h1>
+                    <div class="glass-card">
+                        <input type="text" id="teacher-input" class="search-input" placeholder="Фамилия преподавателя...">
+                        <button class="action-btn" onclick="searchTeacher()">🔍 Найти</button>
+                    </div>
+                    <div id="teacher-results"></div>
+                </div>
+            </div>
+
+            <!-- Экран профиля (индекс 4) -->
+            <div class="screen" id="profile-screen">
+                <div class="content-scroll" style="padding-top: 20px;">
+                    <!-- Карточка профиля -->
+                    <div class="glass-card" id="profile-card">
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <img id="profile-photo" src="" style="width: 60px; height: 60px; border-radius: 30px; object-fit: cover;">
+                            <div>
+                                <h2 id="profile-name">Загрузка...</h2>
+                                <p id="profile-role"></p>
+                                <p id="profile-username"></p>
+                            </div>
+                        </div>
+                        <button class="action-btn" onclick="editProfile()">✎ Редактировать</button>
+                    </div>
+
+                    <!-- Входящие заявки -->
+                    <div class="glass-card" id="requests-section" style="display: none;">
+                        <h3>Заявки в друзья</h3>
+                        <div id="requests-list"></div>
+                    </div>
+
+                    <!-- Список друзей -->
+                    <div class="glass-card">
+                        <h3>Мои друзья</h3>
+                        <div id="friends-list"></div>
+                    </div>
+
+                    <!-- Поиск людей -->
+                    <div class="glass-card">
+                        <input type="text" id="search-people-input" class="search-input" placeholder="Введите имя...">
+                        <button class="action-btn" onclick="performSearch()">🔍 Найти</button>
+                        <div id="search-results"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <nav class="bottom-nav">
+        <div class="nav-item" onclick="switchScreen(1)">
+            <span>🏠</span>
+            <span>Главная</span>
+        </div>
+        <div class="nav-item active" onclick="switchScreen(2)">
+            <span>📅</span>
+            <span>Расписание</span>
+        </div>
+        <div class="nav-item" onclick="switchScreen(3)">
+            <span>🔍</span>
+            <span>Поиск</span>
+        </div>
+        <div class="nav-item" onclick="switchScreen(4)">
+            <span>👤</span>
+            <span>Профиль</span>
+        </div>
+    </nav>
+
+    <script>
+        // Исходный код пользователя (всё, что было внутри тега script)
+        const API_BASE = "https://vsu-schedule-bot-code.onrender.com/api";
+        let currentDayIndex = 0; 
+        let touchStartX = 0; 
+        let teacherCache = {};
+
+        const typeMap = {
+            'Лек': 'Лекция',
+            'Лек (off)': 'Оффлайн Лекция',
+            'Лаб': 'Лабораторная работа',
+            'ПЗ': 'Практическое занятие',
+            'Пр': 'Практическое занятие',
+            'Сем': 'Семинар',
+            'Экз': 'Экзамен',
+            'Зач': 'Зачет',
+            'Куср': 'КУСР'
+        };
+
+        const screenToNavIndex = {
+            0: null,
+            1: 0,
+            2: 1,
+            3: 2
+        };
+
+        function switchScreen(idx) {
+            const nav = document.querySelector('.bottom-nav');
+            if (idx === 0) {
+                nav.classList.add('hidden');
+            } else {
+                nav.classList.remove('hidden');
+            }
+            
+            document.getElementById('screens-container').style.transform = `translateX(-${idx * 20}%)`;
+            
+            document.querySelectorAll('.nav-item').forEach((n, i) => {
+                n.classList.toggle('active', i === screenToNavIndex[idx]);
+            });
+            
+            // Перезапускаем анимацию для всех карточек на новом экране
+            const currentScreen = document.querySelectorAll('.screen')[idx];
+            const cards = currentScreen.querySelectorAll('.glass-card');
+            cards.forEach(card => {
+                card.style.animation = 'none';
+                card.offsetHeight; // форсируем перерисовку
+                card.style.animation = 'fadeInUp 0.3s ease forwards';
+            });
+        }
+
+        function goToDay(idx) {
+            if (idx < 0 || idx > 5) return;
+            currentDayIndex = idx;
+            localStorage.setItem('vsu_last_day', idx);
+            
+            const track = document.getElementById('schedule-track');
+            if (track) track.style.transform = `translateX(-${idx * 16.666}%)`;
+            document.querySelectorAll('.day-tab').forEach((t, i) => t.classList.toggle('active', i === idx));
+            
+            // Анимируем карточки в выбранном дне
+            const dayColumns = document.querySelectorAll('.day-column');
+            const cards = dayColumns[idx].querySelectorAll('.glass-card');
+            cards.forEach(card => {
+                card.style.animation = 'none';
+                card.offsetHeight;
+                card.style.animation = 'fadeInUp 0.3s ease forwards';
+            });
+        }
+
+        function openThemeScreen() {
+            switchScreen(0);
+        }
+
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('vsu_theme', theme);
+            
+            const style = getComputedStyle(document.documentElement);
+            const b1 = document.querySelector('.blob-1');
+            const b2 = document.querySelector('.blob-2');
+            if(b1) b1.style.background = style.getPropertyValue('--blob1').trim();
+            if(b2) b2.style.background = style.getPropertyValue('--blob2').trim();
+            
+            const nav = document.querySelector('.bottom-nav');
+            if(nav) {
+                nav.style.background = style.getPropertyValue('--primary-grad');
+            }
+            
+            document.querySelectorAll('.theme-option').forEach(opt => {
+                opt.classList.remove('active-theme');
+            });
+            const activeOption = document.querySelector(`[onclick="setTheme('${theme}')"]`);
+            if(activeOption) activeOption.classList.add('active-theme');
+        }
+
+        function renderLessonRow(l, mode = 'group') {
+            const timeClean = (l.time || '').replace(/[()]/g, '');
+            const timeParts = timeClean.split('-');
+            const tStart = timeParts[0] || '';
+            const tEnd = timeParts[1] || '';
+
+            let fullName = l.name || '';
+            let typeDisplay = '';
+            
+            const typeMatch = fullName.match(/\((Лек(?: \(off\))?|Лаб|ПЗ|Пр|Сем|Экз|Зач|Куср)\)$/i);
+            if (typeMatch) {
+                typeDisplay = typeMap[typeMatch[1]] || typeMatch[1];
+                fullName = fullName.replace(typeMatch[0], '').trim();
+            }
+
+            const typeBadge = typeDisplay ? `<div class="lesson-type">${typeDisplay}</div>` : '';
+            const subText = mode === 'group' ? (l.teacher || '---') : `Группа: ${l.group || '---'}`;
+            const subIcon = mode === 'group' ? '👨‍🏫' : '👥';
+
+            return `
+                <div class="lesson-row">
+                    <div class="time-block">
+                        <span class="time-start">${tStart}</span>
+                        <span class="time-end">${tEnd}</span>
+                    </div>
+                    <div style="flex: 1;">
+                        ${typeBadge}
+                        <div style="font-weight: 800; font-size: 15px; margin-bottom: 4px; line-height: 1.2;">${fullName}</div>
+                        <div style="display: flex; gap: 10px; opacity: 0.7; font-size: 12px; font-weight: 600;">
+                            <span>📍 ${l.room || '-'}</span>
+                            <span>${subIcon} ${subText}</span>
+                        </div>
+                    </div>
+                </div>`;
+        }
+
+        async function loadSchedule(group) {
+            const track = document.getElementById('schedule-track');
+            track.innerHTML = '<div class="day-column"><div class="glass-card">Загрузка...</div></div>';
+            try {
+                const r = await fetch(`${API_BASE}/schedule/${encodeURIComponent(group)}`);
+                const data = await r.json();
+                const days = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
+                
+                track.innerHTML = days.map(day => {
+                    const lessons = data.schedule[day] || [];
+                    return `<div class="day-column">
+                        <div class="glass-card" style="margin-bottom: 20px;">
+                            <div style="font-weight:900; color:var(--primary-solid); border-bottom:1px solid var(--border); padding-bottom:10px; margin-bottom:15px; font-size:14px;">${day.toUpperCase()}</div>
+                            ${lessons.length ? lessons.map(l => renderLessonRow(l, 'group')).join('') : '<div style="opacity:0.5; padding:40px 0; text-align:center;">Пар нет</div>'}
+                        </div>
+                    </div>`;
+                }).join('');
+
+                const lastDay = localStorage.getItem('vsu_last_day');
+                if(lastDay !== null) {
+                    goToDay(parseInt(lastDay));
+                } else { 
+                    let d = new Date().getDay(); 
+                    goToDay(d === 0 ? 0 : d - 1); 
+                }
+                switchScreen(2);
+            } catch (e) { 
+                track.innerHTML = '<div class="day-column"><div class="glass-card">Ошибка загрузки</div></div>'; 
+            }
+        }
+
+        async function searchTeacher() {
+            const nameInput = document.getElementById('teacher-input').value.trim();
+            if(nameInput.length < 3) return alert("Введите хотя бы 3 буквы фамилии");
+            const resDiv = document.getElementById('teacher-results');
+            resDiv.innerHTML = '<div class="glass-card">🔍 Поиск...</div>';
+            try {
+                const r = await fetch(`${API_BASE}/teacher/${encodeURIComponent(nameInput)}`);
+                const data = await r.json();
+                if(!data.schedule || Object.keys(data.schedule).length === 0) {
+                    resDiv.innerHTML = '<div class="glass-card">Не найден</div>';
+                    return;
+                }
+                teacherCache = {};
+                Object.entries(data.schedule).forEach(([day, lessons]) => {
+                    lessons.forEach(l => {
+                        const tName = l.teacher || "Неизвестно";
+                        if (!teacherCache[tName]) teacherCache[tName] = {};
+                        if (!teacherCache[tName][day]) teacherCache[tName][day] = [];
+                        teacherCache[tName][day].push(l);
+                    });
+                });
+                const names = Object.keys(teacherCache).sort();
+                if (names.length === 1) renderTeacherSchedule(names[0]);
+                else {
+                    let html = '<div class="glass-card"><label class="field-label">НАЙДЕНО:</label>';
+                    names.forEach(n => {
+                        html += `<button class="action-btn" style="background:var(--card-bg); color:var(--text); border:1px solid var(--primary); margin-top:8px;" 
+                                onclick="renderTeacherSchedule('${n.replace(/'/g, "\\'")}')">${n}</button>`;
+                    });
+                    resDiv.innerHTML = html + '</div>';
+                }
+            } catch(e) { 
+                resDiv.innerHTML = '<div class="glass-card">Ошибка</div>'; 
+            }
+        }
+
+        function renderTeacherSchedule(tName) {
+            const resDiv = document.getElementById('teacher-results');
+            const sched = teacherCache[tName];
+            const days = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
+            let html = `<div style="text-align:center; font-weight:900; margin-bottom:15px; color:var(--primary-solid); font-size:18px;">${tName}</div>
+                        <button class="action-btn" style="background:#64748b; margin-bottom:20px;" onclick="searchTeacher()">⬅️ Назад</button>`;
+            
+            days.forEach((day, index) => {
+                if(sched[day]) {
+                    html += `<div class="glass-card teacher-result" style="animation-delay: ${index * 0.1}s;">
+                                <div style="font-weight:900; color:var(--primary-solid); border-bottom:1px solid var(--border); padding-bottom:8px; margin-bottom:12px; font-size:12px;">${day.toUpperCase()}</div>`;
+                    sched[day].sort((a,b) => a.time.localeCompare(b.time)).forEach(l => {
+                        html += renderLessonRow(l, 'teacher');
+                    });
+                    html += `</div>`;
+                }
+            });
+            resDiv.innerHTML = html;
+        }
+
+        async function loadGroups(fac) {
+            const gSel = document.getElementById('group-select');
+            document.getElementById('group-area').style.display = 'block';
+            gSel.innerHTML = '<option>...</option>';
+            try {
+                const r = await fetch(`${API_BASE}/faculties/${encodeURIComponent(fac)}/groups`);
+                const data = await r.json();
+                gSel.innerHTML = '<option disabled selected>Выберите группу...</option>' + 
+                                data.groups.map(g => `<option value="${g}">${g}</option>`).join('');
+            } catch(e) { 
+                gSel.innerHTML = '<option>Ошибка</option>'; 
+            }
+        }
+
+        async function init() {
+            const container = document.getElementById('screens-container');
+            container.style.transition = 'none';
+            container.style.transform = 'translateX(-50%)';
+            
+            document.querySelectorAll('.nav-item').forEach((n, i) => {
+                n.classList.toggle('active', i === 1);
+            });
+            
+            setTheme(localStorage.getItem('vsu_theme') || 'light');
+            
+            setTimeout(() => {
+                container.style.transition = 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)';
+            }, 100);
+            
+            const fSel = document.getElementById('fac-select');
+            try {
+                const r = await fetch(`${API_BASE}/faculties`);
+                const data = await r.json();
+                fSel.innerHTML = '<option disabled selected>Выберите факультет...</option>' + 
+                                data.faculties.map(f => `<option value="${f}">${f}</option>`).join('');
+                
+                const savedF = localStorage.getItem('vsu_fac'), 
+                    savedG = localStorage.getItem('vsu_group');
+                if (savedF) {
+                    fSel.value = savedF; 
+                    await loadGroups(savedF);
+                    if (savedG) { 
+                        document.getElementById('group-select').value = savedG; 
+                        loadSchedule(savedG); 
+                    }
+                }
+            } catch (e) { 
+                fSel.innerHTML = '<option>Ошибка сети</option>'; 
+            }
+        }
+
+        document.getElementById('fac-select').onchange = (e) => { 
+            localStorage.setItem('vsu_fac', e.target.value); 
+            loadGroups(e.target.value); 
+        };
+        
+        document.getElementById('group-select').onchange = (e) => { 
+            localStorage.setItem('vsu_group', e.target.value); 
+            loadSchedule(e.target.value); 
+        };
+        
+        const swiperBox = document.getElementById('schedule-swiper');
+        if(swiperBox) {
+            swiperBox.addEventListener('touchstart', e => touchStartX = e.touches[0].clientX, {passive: true});
+            swiperBox.addEventListener('touchend', e => {
+                const diff = touchStartX - e.changedTouches[0].clientX;
+                if (Math.abs(diff) > 60) diff > 0 ? goToDay(currentDayIndex + 1) : goToDay(currentDayIndex - 1);
+            }, {passive: true});
+        }
+
+        init();
+    </script>
+
+    <!-- Firebase подключение (модуль) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+        import { 
+            getFirestore, 
+            doc, 
+            setDoc, 
+            getDoc, 
+            updateDoc, 
+            arrayUnion, 
+            arrayRemove, 
+            collection, 
+            query, 
+            where, 
+            getDocs,
+            limit
+        } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCxiuSARZvPnddpHMnOqI4uQ7vTlGY7omU",
+            authDomain: "vsu-shedule.firebaseapp.com",
+            projectId: "vsu-shedule",
+            storageBucket: "vsu-shedule.firebasestorage.app",
+            messagingSenderId: "532526429901",
+            appId: "1:532526429901:web:bc37784f679d7d381f9b84",
+            measurementId: "G-PJC9GMEFR7"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Делаем функции глобальными
+        window.db = db;
+        window.doc = doc;
+        window.setDoc = setDoc;
+        window.getDoc = getDoc;
+        window.updateDoc = updateDoc;
+        window.arrayUnion = arrayUnion;
+        window.arrayRemove = arrayRemove;
+        window.collection = collection;
+        window.query = query;
+        window.where = where;
+        window.getDocs = getDocs;
+        window.limit = limit;
+    </script>
+
+    <!-- Новые функции для профилей и друзей -->
+    <script>
+        // Глобальная переменная для Telegram ID
+        let telegramUserId = null;
+
+        // Получение данных из Telegram WebApp
+        (function initTelegram() {
+            const tg = window.Telegram?.WebApp;
+            if (tg) {
+                tg.ready();
+                tg.expand();
+                const user = tg.initDataUnsafe?.user;
+                if (user) {
+                    telegramUserId = user.id.toString();
+                    window.telegramUserId = telegramUserId;
+                    console.log('Telegram user ID:', telegramUserId);
+                }
+            }
+        })();
+
+        // Инициализация профиля при первом входе
+        async function initUserProfile() {
+            if (!telegramUserId) return;
+
+            const tg = window.Telegram?.WebApp;
+            const tgUser = tg?.initDataUnsafe?.user;
+            if (!tgUser) return;
+
+            const firstName = tgUser.first_name || '';
+            const lastName = tgUser.last_name || '';
+            const displayName = [firstName, lastName].filter(Boolean).join(' ') || 'Пользователь';
+
+            const userRef = doc(db, 'users', telegramUserId);
+            const snap = await getDoc(userRef);
+
+            if (!snap.exists()) {
+                await setDoc(userRef, {
+                    displayName: displayName,
+                    username: tgUser.username || '',
+                    photo: tgUser.photo_url || '',
+                    role: 'student',
+                    friends: [],
+                    friendRequests: [],
+                    name_lower: displayName.toLowerCase(),
+                    faculty: '',
+                    group: '',
+                    teacherName: '',
+                    settings: {},
+                    createdAt: new Date()
+                });
+                console.log('Профиль создан');
+            } else {
+                const data = snap.data();
+                if (data.settings?.theme) {
+                    setTheme(data.settings.theme);
+                }
+            }
+        }
+
+        // Поиск людей по имени
+        async function searchPeople(queryText) {
+            if (!queryText || queryText.length < 2) return [];
+            const q = queryText.toLowerCase();
+            const usersRef = collection(db, 'users');
+            const q1 = query(usersRef, where('name_lower', '>=', q), where('name_lower', '<=', q + '\uf8ff'), limit(20));
+            const snapshot = await getDocs(q1);
+            const results = [];
+            snapshot.forEach(doc => {
+                if (doc.id !== telegramUserId) {
+                    results.push({ id: doc.id, ...doc.data() });
+                }
+            });
+            return results;
+        }
+
+        // Отправка заявки в друзья
+        async function sendFriendRequest(targetUserId) {
+            if (!telegramUserId || !targetUserId) return;
+            const targetRef = doc(db, 'users', targetUserId);
+            await updateDoc(targetRef, {
+                friendRequests: arrayUnion(telegramUserId)
+            });
+            alert('Заявка отправлена');
+        }
+
+        // Принятие заявки
+        async function acceptFriendRequest(requesterId) {
+            if (!telegramUserId || !requesterId) return;
+            const myRef = doc(db, 'users', telegramUserId);
+            const requesterRef = doc(db, 'users', requesterId);
+
+            await updateDoc(myRef, {
+                friendRequests: arrayRemove(requesterId)
+            });
+
+            await updateDoc(myRef, {
+                friends: arrayUnion(requesterId)
+            });
+            await updateDoc(requesterRef, {
+                friends: arrayUnion(telegramUserId)
+            });
+            alert('Заявка принята');
+        }
+
+        // Отклонение заявки
+        async function rejectFriendRequest(requesterId) {
+            if (!telegramUserId) return;
+            const myRef = doc(db, 'users', telegramUserId);
+            await updateDoc(myRef, {
+                friendRequests: arrayRemove(requesterId)
+            });
+            alert('Заявка отклонена');
+        }
+
+        // Удаление из друзей
+        async function removeFriend(friendId) {
+            if (!telegramUserId) return;
+            const myRef = doc(db, 'users', telegramUserId);
+            const friendRef = doc(db, 'users', friendId);
+
+            await updateDoc(myRef, {
+                friends: arrayRemove(friendId)
+            });
+            await updateDoc(friendRef, {
+                friends: arrayRemove(telegramUserId)
+            });
+            alert('Пользователь удалён из друзей');
+        }
+
+        // Открыть Telegram-чат
+        function openTelegram(username) {
+            if (!username) {
+                alert('У пользователя нет username');
+                return;
+            }
+            window.location.href = `tg://resolve?domain=${username}`;
+            setTimeout(() => window.open(`https://t.me/${username}`, '_blank'), 500);
+        }
+
+        // Загрузка данных на экран профиля
+        async function loadProfileScreen() {
+            if (!telegramUserId) return;
+
+            const userRef = doc(db, 'users', telegramUserId);
+            const snap = await getDoc(userRef);
+            if (!snap.exists()) return;
+
+            const data = snap.data();
+            document.getElementById('profile-name').textContent = data.displayName;
+            document.getElementById('profile-role').textContent = data.role === 'student' ? 'Студент' : 'Преподаватель';
+            document.getElementById('profile-username').textContent = data.username ? '@' + data.username : '';
+            if (data.photo) {
+                document.getElementById('profile-photo').src = data.photo;
+            }
+
+            if (data.friends && data.friends.length > 0) {
+                loadFriendsList(data.friends);
+            } else {
+                document.getElementById('friends-list').innerHTML = '<p>У вас пока нет друзей</p>';
+            }
+
+            if (data.friendRequests && data.friendRequests.length > 0) {
+                loadFriendRequests(data.friendRequests);
+            } else {
+                document.getElementById('requests-section').style.display = 'none';
+            }
+        }
+
+        async function loadFriendsList(friendIds) {
+            let html = '';
+            for (let id of friendIds) {
+                const friendRef = doc(db, 'users', id);
+                const snap = await getDoc(friendRef);
+                if (snap.exists()) {
+                    const data = snap.data();
+                    html += `
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <img src="${data.photo || ''}" style="width: 40px; height: 40px; border-radius: 20px; object-fit: cover;">
+                            <span style="flex:1;">${data.displayName}</span>
+                            <button class="action-btn" style="width: auto;" onclick="openTelegram('${data.username}')">Написать</button>
+                            <button class="action-btn btn-danger" style="width: auto;" onclick="removeFriend('${id}')">Удалить</button>
+                        </div>
+                    `;
+                }
+            }
+            document.getElementById('friends-list').innerHTML = html || '<p>Не удалось загрузить друзей</p>';
+        }
+
+        async function loadFriendRequests(requestIds) {
+            document.getElementById('requests-section').style.display = 'block';
+            let html = '';
+            for (let id of requestIds) {
+                const userRef = doc(db, 'users', id);
+                const snap = await getDoc(userRef);
+                if (snap.exists()) {
+                    const data = snap.data();
+                    html += `
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <img src="${data.photo || ''}" style="width: 40px; height: 40px; border-radius: 20px;">
+                            <span style="flex:1;">${data.displayName}</span>
+                            <button class="action-btn" style="width: auto;" onclick="acceptFriendRequest('${id}')">✓ Принять</button>
+                            <button class="action-btn btn-danger" style="width: auto;" onclick="rejectFriendRequest('${id}')">✗ Отклонить</button>
+                        </div>
+                    `;
+                }
+            }
+            document.getElementById('requests-list').innerHTML = html;
+        }
+
+        // Поиск и отображение результатов
+        async function performSearch() {
+            const queryText = document.getElementById('search-people-input').value.trim();
+            if (queryText.length < 2) {
+                alert('Введите минимум 2 символа');
+                return;
+            }
+            const results = await searchPeople(queryText);
+            const container = document.getElementById('search-results');
+            if (results.length === 0) {
+                container.innerHTML = '<p>Ничего не найдено</p>';
+                return;
+            }
+            let html = '';
+            results.forEach(user => {
+                html += `
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                        <img src="${user.photo || ''}" style="width: 40px; height: 40px; border-radius: 20px;">
+                        <span style="flex:1;">${user.displayName}</span>
+                        <button class="action-btn" style="width: auto;" onclick="sendFriendRequest('${user.id}')">➕ Друг</button>
+                        <button class="action-btn" style="width: auto;" onclick="openTelegram('${user.username}')">✉️ Написать</button>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        // Переопределяем функцию switchScreen, чтобы добавить вызов loadProfileScreen для экрана 4
+        // Сохраняем старую функцию, но переопределяем новую
+        const originalSwitchScreen = window.switchScreen;
+        window.switchScreen = function(idx) {
+            // Вызываем оригинальную логику, но нужно учесть, что screenToNavIndex теперь должен включать 4
+            // В оригинале screenToNavIndex не включает 4, поэтому навигация не будет работать для нового экрана.
+            // Переопределим полностью, скопировав код оригинальной функции и добавив обработку 4.
+            const nav = document.querySelector('.bottom-nav');
+            if (idx === 0) {
+                nav.classList.add('hidden');
+            } else {
+                nav.classList.remove('hidden');
+            }
+            
+            document.getElementById('screens-container').style.transform = `translateX(-${idx * 20}%)`;
+            
+            // Обновлённый маппинг индексов экранов на индексы навигации (навигация имеет 4 элемента)
+            const navIndexMap = {
+                0: null,
+                1: 0,
+                2: 1,
+                3: 2,
+                4: 3
+            };
+            document.querySelectorAll('.nav-item').forEach((n, i) => {
+                n.classList.toggle('active', i === navIndexMap[idx]);
+            });
+            
+            // Перезапускаем анимацию для всех карточек на новом экране
+            const currentScreen = document.querySelectorAll('.screen')[idx];
+            if (currentScreen) {
+                const cards = currentScreen.querySelectorAll('.glass-card');
+                cards.forEach(card => {
+                    card.style.animation = 'none';
+                    card.offsetHeight; // форсируем перерисовку
+                    card.style.animation = 'fadeInUp 0.3s ease forwards';
+                });
+            }
+
+            // Дополнительное действие для экрана профиля
+            if (idx === 4) {
+                loadProfileScreen();
+            }
+        };
+
+        // Вызов инициализации профиля после загрузки страницы
+        setTimeout(() => {
+            if (telegramUserId) {
+                initUserProfile();
+            } else {
+                console.log('Telegram ID не получен, возможно приложение запущено вне Telegram');
+            }
+        }, 1000);
+
+        // Заглушка для функции редактирования профиля (пока не реализована)
+        window.editProfile = function() {
+            alert('Редактирование профиля будет доступно позже');
+        };
+    </script>
+</body>
+</html>
